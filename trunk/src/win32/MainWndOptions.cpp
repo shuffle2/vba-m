@@ -358,46 +358,46 @@ BOOL MainWnd::OnVideoLayer(UINT nID)
   int thisLayer = -1;
   switch( nID ) {
 	  case ID_OPTIONS_VIDEO_LAYERS_BG0:
-		  msg = "BG0";
+		  msg = _T("BG0");
 		  thisLayer = 256;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_BG1:
-		  msg = "BG1";
+		  msg = _T("BG1");
 		  thisLayer = 512;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_BG2:
-		  msg = "BG2";
+		  msg = _T("BG2");
 		  thisLayer = 1024;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_BG3:
-		  msg = "BG3";
+		  msg = _T("BG3");
 		  thisLayer = 2048;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_OBJ:
-		  msg = "OBJ";
+		  msg = _T("OBJ");
 		  thisLayer = 4096;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_WIN0:
-		  msg = "WIN0";
+		  msg = _T("WIN0");
 		  thisLayer = 8192;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_WIN1:
-		  msg = "WIN1";
+		  msg = _T("WIN1");
 		  thisLayer = 16384;
 		  break;
 	  case ID_OPTIONS_VIDEO_LAYERS_OBJWIN:
-		  msg = "OBJWIN";
+		  msg = _T("OBJWIN");
 		  thisLayer = 32768;
 		  break;
 	  default:
 		  ASSERT( false );
   }
   if( layerSettings & thisLayer ) {
-	  msg.Append( " enabled" );
+	  msg.Append( _T(" enabled") );
   } else {
-	  msg.Append( " disabled" );
+	  msg.Append( _T(" disabled") );
   }
-  systemScreenMessage( msg );
+  systemScreenMessage(CStringA(msg));
 
   return TRUE;
 }
@@ -651,7 +651,7 @@ void MainWnd::OnOptionsEmulatorRewindinterval()
 
 	if( v >= 0 ) {
 		theApp.rewindTimer = v*6; // convert to a multiple of 10 frames
-		regSetDwordValue("rewindTimer", v);
+		regSetDwordValue(_T("rewindTimer"), v);
 		if(v == 0) {
 			if(theApp.rewindMemory) {
 				free(theApp.rewindMemory);
@@ -674,7 +674,7 @@ BOOL MainWnd::OnOptionsEmulatorShowSpeed(UINT nID)
   switch(nID) {
   case ID_OPTIONS_EMULATOR_SHOWSPEED_NONE:
     theApp.showSpeed = 0;
-    systemSetTitle(VBA_NAME_AND_SUBVERSION);
+    systemSetTitle(CStringA(VBA_NAME_AND_SUBVERSION));
     break;
   case ID_OPTIONS_EMULATOR_SHOWSPEED_PERCENTAGE:
     theApp.showSpeed = 1;
@@ -1196,7 +1196,7 @@ BOOL MainWnd::OnOptionsFilter(UINT nID)
 		break;
 	case ID_OPTIONS_FILTER_PLUGIN:
 		theApp.filterType = FILTER_PLUGIN;
-		if( strcmp( theApp.pluginName, "" ) == 0 ) {
+		if( _tcscmp( theApp.pluginName, _T("") ) == 0 ) {
 			// open select plugin dialog when none selected
 			OnOptionsSelectPlugin();
 		}
@@ -1477,37 +1477,37 @@ BOOL MainWnd::OnOptionsJoypadAutofire(UINT nID)
   case ID_OPTIONS_JOYPAD_AUTOFIRE_A:
     if(theApp.autoFire & 1) {
       theApp.autoFire &= ~1;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_A_DISABLED));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_A_DISABLED)));
     } else {
       theApp.autoFire |= 1;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_A));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_A)));
     }
     break;
   case ID_OPTIONS_JOYPAD_AUTOFIRE_B:
     if(theApp.autoFire & 2) {
       theApp.autoFire &= ~2;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_B_DISABLED));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_B_DISABLED)));
     } else {
       theApp.autoFire |= 2;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_B));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_B)));
     }
     break;
   case ID_OPTIONS_JOYPAD_AUTOFIRE_L:
     if(theApp.autoFire & 512) {
       theApp.autoFire &= ~512;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_L_DISABLED));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_L_DISABLED)));
     } else {
       theApp.autoFire |= 512;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_L));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_L)));
     }
     break;
   case ID_OPTIONS_JOYPAD_AUTOFIRE_R:
     if(theApp.autoFire & 256) {
       theApp.autoFire &= ~256;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_R_DISABLED));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_R_DISABLED)));
     } else {
       theApp.autoFire |= 256;
-      systemScreenMessage(winResLoadString(IDS_AUTOFIRE_R));
+      systemScreenMessage(CStringA(winResLoadString(IDS_AUTOFIRE_R)));
     }
     break;
   default:
@@ -1560,7 +1560,11 @@ void MainWnd::OnOptionsLinkRFU()
 	if(rfu_enabled) rfu_enabled = false;
 	else {
 		rfu_enabled = true;
-		MessageBox("Please note this is the first version\nof RFU emulation code and it's not 100% bug free.\nAlso only 2 players single computer are supported at this time.", "Warning", MB_OK);
+		MessageBox(
+            _T("Please note this is the first version\n")
+            _T("of RFU emulation code and it's not 100% bug free.\n")
+            _T("Also only 2 players single computer are supported at this time."),
+            _T("Warning"), MB_OK);
 	}
 }
 

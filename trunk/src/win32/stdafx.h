@@ -11,6 +11,9 @@
 #define STRICT
 #endif
 
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT 1
+
 #include "targetver.h"
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit

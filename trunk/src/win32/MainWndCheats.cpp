@@ -67,21 +67,21 @@ void MainWnd::OnCheatsLoadcheatlist()
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
 
   if(saveDir.IsEmpty())
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.clt", saveDir, buffer);
+    filename.Format(_T("%s%s.clt"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.clt", saveDir, buffer);
+    filename.Format(_T("%s\\%s.clt"), saveDir, buffer);
 
-  LPCTSTR exts[] = { ".clt" };
+  LPCTSTR exts[] = { _T(".clt") };
   CString filter = winLoadFilter(IDS_FILTER_CHEAT_LIST);
   CString title = winResLoadString(IDS_SELECT_CHEAT_LIST_NAME);
 
-  FileDlg dlg(this, filename, filter, 0, "CLT", exts, saveDir, title, false);
+  FileDlg dlg(this, filename, filter, 0, _T("CLT"), exts, saveDir, title, false);
 
   if(dlg.DoModal() == IDOK) {
     winLoadCheatList(dlg.GetPathName());
@@ -105,21 +105,21 @@ void MainWnd::OnCheatsSavecheatlist()
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
 
   if(saveDir.IsEmpty())
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.clt", saveDir, buffer);
+    filename.Format(_T("%s%s.clt"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.clt", saveDir, buffer);
+    filename.Format(_T("%s\\%s.clt"), saveDir, buffer);
 
-  LPCTSTR exts[] = { ".clt" };
+  LPCTSTR exts[] = { _T(".clt") };
   CString filter = winLoadFilter(IDS_FILTER_CHEAT_LIST);
   CString title = winResLoadString(IDS_SELECT_CHEAT_LIST_NAME);
 
-  FileDlg dlg(this, filename, filter, 0, "CLT", exts, saveDir, title, true);
+  FileDlg dlg(this, filename, filter, 0, _T("CLT"), exts, saveDir, title, true);
 
   if(dlg.DoModal() == IDOK) {
     winSaveCheatList(dlg.GetPathName());
@@ -134,7 +134,7 @@ void MainWnd::OnUpdateCheatsSavecheatlist(CCmdUI* pCmdUI)
 void MainWnd::OnCheatsDisablecheats()
 {
   cheatsEnabled = !cheatsEnabled;
-  systemScreenMessage(winResLoadString(cheatsEnabled ? IDS_CHEATS_ENABLED : IDS_CHEATS_DISABLED));
+  systemScreenMessage(CStringA(winResLoadString(cheatsEnabled ? IDS_CHEATS_ENABLED : IDS_CHEATS_DISABLED)));
 }
 
 void MainWnd::OnUpdateCheatsDisablecheats(CCmdUI* pCmdUI)

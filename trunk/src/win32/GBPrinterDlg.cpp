@@ -97,11 +97,11 @@ BEGIN_MESSAGE_MAP(GBPrinterDlg, CDialog)
   /////////////////////////////////////////////////////////////////////////////
 // GBPrinter message handlers
 
-void GBPrinterDlg::saveAsBMP(const char *name)
+void GBPrinterDlg::saveAsBMP(LPCTSTR name)
 {
   u8 writeBuffer[512 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s", name);
@@ -164,11 +164,11 @@ void GBPrinterDlg::saveAsBMP(const char *name)
 }
 
 
-void GBPrinterDlg::saveAsPNG(const char *name)
+void GBPrinterDlg::saveAsPNG(LPCTSTR name)
 {
   u8 writeBuffer[160 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s",
@@ -244,11 +244,11 @@ void GBPrinterDlg::OnSave()
   CString captureBuffer;
 
   if(theApp.captureFormat == 0)
-    captureBuffer = "printer.png";
+    captureBuffer = _T("printer.png");
   else
-    captureBuffer = "printer.bmp";
+    captureBuffer = _T("printer.bmp");
 
-  LPCTSTR exts[] = {".png", ".bmp" };
+  LPCTSTR exts[] = {_T(".png"), _T(".bmp") };
 
   CString filter = theApp.winLoadFilter(IDS_FILTER_PNG);
   CString title = winResLoadString(IDS_SELECT_CAPTURE_NAME);
@@ -257,9 +257,9 @@ void GBPrinterDlg::OnSave()
               captureBuffer,
               filter,
               theApp.captureFormat ? 2 : 1,
-              theApp.captureFormat ? "BMP" : "PNG",
+              theApp.captureFormat ? _T("BMP") : _T("PNG"),
               exts,
-              "",
+              _T(""),
               title,
               true);
 
@@ -391,7 +391,7 @@ BOOL GBPrinterDlg::OnInitDialog()
 {
   CDialog::OnInitDialog();
 
-  scale = regQueryDwordValue("printerScale", 0);
+  scale = regQueryDwordValue(_T("printerScale"), 0);
   if(scale < 0 || scale > 3)
     scale = 0;
   m_scale = scale;
@@ -410,25 +410,25 @@ void GBPrinterDlg::OnOk()
 
 void GBPrinterDlg::On1x()
 {
-  regSetDwordValue("printerScale", 0);
+  regSetDwordValue(_T("printerScale"), 0);
   scale = 0;
 }
 
 void GBPrinterDlg::On2x()
 {
-  regSetDwordValue("printerScale", 1);
+  regSetDwordValue(_T("printerScale"), 1);
   scale = 1;
 }
 
 void GBPrinterDlg::On3x()
 {
-  regSetDwordValue("printerScale", 2);
+  regSetDwordValue(_T("printerScale"), 2);
   scale = 2;
 }
 
 void GBPrinterDlg::On4x()
 {
-  regSetDwordValue("printerScale", 3);
+  regSetDwordValue(_T("printerScale"), 3);
   scale = 3;
 }
 

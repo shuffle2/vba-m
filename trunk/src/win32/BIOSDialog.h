@@ -31,7 +31,7 @@ public:
 	BOOL m_enableBIOS_GBC;
 	BOOL m_enableBIOS_GBA;
 	BOOL m_skipLogo;
-	CString m_pathGB;
-	CString m_pathGBC;
-	CString m_pathGBA;
+    CString m_pathGB;
+    CString m_pathGBC;
+    CString m_pathGBA;
 };

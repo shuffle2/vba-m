@@ -47,9 +47,9 @@ class PaletteViewControl : public CWnd
   void render(u16 color, int x, int y);
   void setSelected(int s);
   void setPaletteAddress(int address);
-  bool saveJASCPAL(const char *name);
-  bool saveMSPAL(const char *name);
-  bool saveAdobe(const char *name);
+  bool saveJASCPAL(LPCTSTR name);
+  bool saveMSPAL(LPCTSTR name);
+  bool saveAdobe(LPCTSTR name);
   void init(int c, int w, int h);
   virtual ~PaletteViewControl();
 

@@ -28,7 +28,11 @@ bool gba_joybus_enabled = false;
 // If disabled, gba core won't call any (non-joybus) link functions
 bool gba_link_enabled = false;
 
+#ifdef _WIN32
+#define LOCAL_LINK_NAME TEXT("VBA link memory")
+#else
 #define LOCAL_LINK_NAME "VBA link memory"
+#endif
 #define IP_LINK_PORT 5738
 
 #include "../common/Port.h"
@@ -174,11 +178,12 @@ HANDLE mmf = NULL;
 #else
 int mmf = -1;
 #endif
-char linkevent[] =
-#if !(defined __WIN32__ || defined _WIN32)
-	"/"
+#ifdef _WIN32
+TCHAR linkevent[] = TEXT("VBA link event  ");
+#else
+char linkevent[] = "/VBA link event  ";
 #endif
-	"VBA link event  ";
+
 static int i, j;
 int linktimeout = 1000;
 LANLINKDATA lanlink;

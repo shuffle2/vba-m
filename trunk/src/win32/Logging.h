@@ -9,7 +9,7 @@
 class Logging : public ResizeDlg
 {
 public:
-	void log(const char *);
+	void log(LPCTSTR);
 	void clearLog();
 	Logging(CWnd* pParent = NULL);   // standard constructor
 	
@@ -61,5 +61,5 @@ public:
 
 void toolsLogging();
 void toolsLoggingClose();
-void toolsLog(const char *s);
+void toolsLog(LPCTSTR s);
 void toolsClearLog();

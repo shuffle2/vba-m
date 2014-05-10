@@ -112,7 +112,7 @@ void Disassemble::OnGo()
 {
   CString buffer;
   m_address.GetWindowText(buffer);
-  sscanf(buffer, "%x", &address);
+  _stscanf(buffer, _T("%x"), &address);
   if (mode==1)
       address&=0xfffffffc;
   else if (mode==2)
@@ -183,7 +183,7 @@ BOOL Disassemble::OnInitDialog()
     SetData(sz,
             TRUE,
             HKEY_CURRENT_USER,
-            "Software\\Emulators\\VisualBoyAdvance\\Viewer\\DisassembleView",
+            _T("Software\\Emulators\\VisualBoyAdvance\\Viewer\\DisassembleView"),
             NULL);
 
   SCROLLINFO si;
@@ -288,19 +288,19 @@ void Disassemble::refresh()
   if(!emulating && theApp.cartridgeType == 0)
     return;
 
-  char buffer[80];
   u32 addr = address;
   int i;
   int sel = -1;
   for(i = 0; i < count; i++) {
+      char disasm[80];
     if(addr == armNextPC)
       sel = i;
     if(arm) {
-      addr += disArm(addr, buffer, 3);
+        addr += disArm(addr, disasm, 3);
     } else {
-      addr += disThumb(addr, buffer, 3);
+        addr += disThumb(addr, disasm, 3);
     }
-    m_list.InsertString(-1, buffer);
+    m_list.InsertString(-1, CString(disasm));
   }
 
   if(sel != -1)
@@ -308,8 +308,10 @@ void Disassemble::refresh()
 
   CPUUpdateCPSR();
 
+  TCHAR buffer[80];
+
   for(i = 0; i < 17; i++) {
-    sprintf(buffer, "%08x", reg[i].I);
+    _stprintf(buffer, _T("%08x"), reg[i].I);
     GetDlgItem(IDC_R0+i)->SetWindowText(buffer);
   }
 
@@ -324,7 +326,7 @@ void Disassemble::refresh()
   UpdateData(FALSE);
 
   int v = reg[16].I & 0x1f;
-  sprintf(buffer, "%02x", v);
+  _stprintf(buffer, _T("%02x"), v);
   GetDlgItem(IDC_MODE)->SetWindowText(buffer);
 }
 

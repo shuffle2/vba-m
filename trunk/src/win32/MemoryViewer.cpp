@@ -145,7 +145,7 @@ void MemoryViewer::OnPaint()
 
   CFont *oldFont = memDC.SelectObject(CFont::FromHandle(font));
 
-  fontSize = memDC.GetTextExtent("0", 1);
+  fontSize = memDC.GetTextExtent(_T("0"), 1);
 
   int lines = h / fontSize.cy;
 
@@ -170,9 +170,9 @@ void MemoryViewer::OnPaint()
   for(int i = 0; i < lines; i++) {
     CString buffer;
     if(addressSize)
-      buffer.Format("%04X", addr);
+      buffer.Format(_T("%04X"), addr);
     else
-      buffer.Format("%08X", addr);
+      buffer.Format(_T("%08X"), addr);
     memDC.DrawText(buffer, &r, DT_TOP | DT_LEFT | DT_NOPREFIX);
     r.left += 10*fontSize.cx;
     beginHex = r.left;
@@ -182,21 +182,21 @@ void MemoryViewer::OnPaint()
 
     if(dataSize == 0) {
       for(j = 0; j < 16; j++) {
-        buffer.Format("%02X", data[j]);
+        buffer.Format(_T("%02X"), data[j]);
         memDC.DrawText(buffer, &r, DT_TOP | DT_LEFT | DT_NOPREFIX);
         r.left += 3*fontSize.cx;
       }
     }
     if(dataSize == 1) {
       for(j = 0; j < 16; j += 2) {
-        buffer.Format("%04X", data[j] | data[j+1]<<8);
+        buffer.Format(_T("%04X"), data[j] | data[j+1]<<8);
         memDC.DrawText(buffer, &r, DT_TOP | DT_LEFT | DT_NOPREFIX);
         r.left += 5*fontSize.cx;
       }
     }
     if(dataSize == 2) {
       for(j = 0; j < 16; j += 4) {
-        buffer.Format("%08X", data[j] | data[j+1]<<8 |
+        buffer.Format(_T("%08X"), data[j] | data[j+1]<<8 |
                       data[j+2] << 16 | data[j+3] << 24);
         memDC.DrawText(buffer, &r, DT_TOP | DT_LEFT | DT_NOPREFIX);
         r.left += 9*fontSize.cx;
@@ -209,7 +209,7 @@ void MemoryViewer::OnPaint()
     beginAscii = r.left;
     buffer.Empty();
     for(j = 0; j < 16; j++) {
-      char c = data[j];
+      TCHAR c = data[j];
       if(c >= 32 && c <= 127) {
         buffer += c;
       } else
@@ -578,7 +578,7 @@ void MemoryViewer::registerClass()
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH )GetStockObject(WHITE_BRUSH);
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = "VbaMemoryViewer";
+    wc.lpszClassName = _T("VbaMemoryViewer");
     AfxRegisterClass(&wc);
     isRegistered = true;
   }

@@ -18,7 +18,7 @@ class WavWriter
   WavWriter();
   ~WavWriter();
 
-  bool Open(const char *name);
+  bool Open(LPCTSTR name);
   void SetFormat(const WAVEFORMATEX *format);
   void AddSound(const u8 *data, int len);
 

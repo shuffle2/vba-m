@@ -33,8 +33,8 @@ class GBTileView : public ResizeDlg, IUpdateListener
   void paint();
   void render();
   void renderTile(int tile, int x, int y, u8 *charBase);
-  void savePNG(const char *name);
-  void saveBMP(const char *name);
+  void savePNG(LPCTSTR name);
+  void saveBMP(LPCTSTR name);
   GBTileView(CWnd* pParent = NULL);   // standard constructor
   virtual ~GBTileView();
 

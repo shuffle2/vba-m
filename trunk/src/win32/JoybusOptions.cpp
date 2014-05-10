@@ -38,7 +38,7 @@ BOOL JoybusOptions::OnInitDialog()
 
 	hostname.EnableWindow(enable_check.GetCheck() == BST_CHECKED);
 
-	hostname.SetWindowText(joybusHostAddr.ToString().c_str());
+	hostname.SetWindowText(CString(joybusHostAddr.ToString().c_str()));
 
 	return TRUE;
 }
@@ -53,21 +53,22 @@ void JoybusOptions::OnBnClickedOk()
 	if ( (hostname.GetWindowTextLength() == 0)
 		&& (enable_check.GetCheck() == BST_CHECKED) )
 	{
-		hostname.SetWindowText("Enter IP or Hostname");
+        hostname.SetWindowText(CString("Enter IP or Hostname"));
 		return;
 	}
 
 	gba_joybus_enabled = enable_check.GetCheck() == BST_CHECKED;
 
-	CString address;
-	hostname.GetWindowText(address);
+	CString addressW;
+	hostname.GetWindowText(addressW);
+    CStringA address(addressW);
 
 	sf::IPAddress new_server;
 	new_server = std::string(address);
 
 	if (!new_server.IsValid())
 	{
-		hostname.SetWindowText("Enter IP or Hostname");
+        hostname.SetWindowText(CString("Enter IP or Hostname"));
 		return;
 	}
 

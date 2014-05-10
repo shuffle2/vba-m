@@ -38,8 +38,8 @@ class GBMapView : public ResizeDlg, IUpdateListener
   void update();
   void paint();
   void render();
-  void savePNG(const char *name);
-  void saveBMP(const char *name);
+  void savePNG(LPCTSTR name);
+  void saveBMP(LPCTSTR name);
   ~GBMapView();
   GBMapView(CWnd* pParent = NULL);   // standard constructor
 

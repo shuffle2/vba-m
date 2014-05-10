@@ -56,12 +56,12 @@ BOOL LangSelect::OnInitDialog()
 {
   CDialog::OnInitDialog();
 
-  char lbuffer[10];
+  TCHAR lbuffer[10];
   if(GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_SABBREVLANGNAME,
                    lbuffer, 10)) {
     m_langName.SetWindowText(lbuffer);
   } else {
-    m_langName.SetWindowText("???");
+    m_langName.SetWindowText(_T("???"));
   }
 
   if(!theApp.languageName.IsEmpty())

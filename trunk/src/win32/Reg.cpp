@@ -2,22 +2,22 @@
 #include "VBA.h"
 #include "..\gba\GBALink.h"
 
-static char buffer[2048];
+static TCHAR buffer[2048];
 static HKEY vbKey = NULL;
 static CString *regVbaPath = NULL;
 
-#define VBA_PREF "preferences"
+#define VBA_PREF _T("preferences")
 
 bool regEnabled = true;
 
-void regInit(const char *path, bool force)
+void regInit(const TCHAR *path, bool force)
 {
 	if( regEnabled ) {
   DWORD disp = 0;
   LONG res = RegCreateKeyEx(HKEY_CURRENT_USER,
-                            "Software\\Emulators\\VisualBoyAdvance",
+                            _T("Software\\Emulators\\VisualBoyAdvance"),
                             0,
-                            "",
+                            _T(""),
                             REG_OPTION_NON_VOLATILE,
                             KEY_ALL_ACCESS,
                             NULL,
@@ -29,7 +29,7 @@ void regInit(const char *path, bool force)
 	  regVbaPath = NULL;
   }
   regVbaPath = new CString();
-  regVbaPath->Format("%s\\vbam.ini", path);
+  regVbaPath->Format(_T("%s\\vbam.ini"), path);
 }
 
 void regShutdown()
@@ -37,12 +37,12 @@ void regShutdown()
   LONG res = RegCloseKey(vbKey);
 }
 
-const char *regGetINIPath()
+const TCHAR *regGetINIPath()
 {
   return *regVbaPath;
 }
 
-char *regQueryStringValue(const char * key, char *def)
+TCHAR *regQueryStringValue(const TCHAR *key, TCHAR *def)
 {
   if(regEnabled) {
     DWORD type = 0;
@@ -74,7 +74,7 @@ char *regQueryStringValue(const char * key, char *def)
   return def;
 }
 
-DWORD regQueryDwordValue(const char * key, DWORD def, bool force)
+DWORD regQueryDwordValue(const TCHAR * key, DWORD def, bool force)
 {
   if(regEnabled || force) {
     DWORD type = 0;
@@ -100,7 +100,7 @@ DWORD regQueryDwordValue(const char * key, DWORD def, bool force)
                               *regVbaPath);
 }
 
-BOOL regQueryBinaryValue(const char * key, char *value, int count)
+BOOL regQueryBinaryValue(const TCHAR * key, void *value, int count)
 {
   if(regEnabled) {
     DWORD type = 0;
@@ -121,7 +121,7 @@ BOOL regQueryBinaryValue(const char * key, char *value, int count)
     return FALSE;
   }
   CString k = key;
-  k += "Count";
+  k += _T("Count");
   int size = GetPrivateProfileInt(VBA_PREF,
                                   k,
                                   -1,
@@ -135,7 +135,7 @@ BOOL regQueryBinaryValue(const char * key, char *value, int count)
                                  *regVbaPath);
 }
 
-void regSetStringValue(const char * key, const char * value)
+void regSetStringValue(const TCHAR * key, const TCHAR * value)
 {
   if(regEnabled) {
     LONG res = RegSetValueEx(vbKey,
@@ -152,7 +152,7 @@ void regSetStringValue(const char * key, const char * value)
   }
 }
 
-void regSetDwordValue(const char * key, DWORD value, bool force)
+void regSetDwordValue(const TCHAR * key, DWORD value, bool force)
 {
   if(regEnabled || force) {
     LONG res = RegSetValueEx(vbKey,
@@ -162,7 +162,7 @@ void regSetDwordValue(const char * key, DWORD value, bool force)
                              (const UCHAR *)&value,
                              sizeof(DWORD));
   } else {
-    wsprintf(buffer, "%u", value);
+    wsprintf(buffer, _T("%u"), value);
     WritePrivateProfileString(VBA_PREF,
                               key,
                               buffer,
@@ -170,7 +170,7 @@ void regSetDwordValue(const char * key, DWORD value, bool force)
   }
 }
 
-void regSetBinaryValue(const char *key, char *value, int count)
+void regSetBinaryValue(const TCHAR *key, void *value, int count)
 {
   if(regEnabled) {
     LONG res = RegSetValueEx(vbKey,
@@ -182,7 +182,7 @@ void regSetBinaryValue(const char *key, char *value, int count)
   } else {
     CString k = key;
     k += "Count";
-    wsprintf(buffer, "%u", count);
+    wsprintf(buffer, _T("%u"), count);
 
     WritePrivateProfileString(VBA_PREF,
                               k,
@@ -197,7 +197,7 @@ void regSetBinaryValue(const char *key, char *value, int count)
   }
 }
 
-void regDeleteValue(char *key)
+void regDeleteValue(TCHAR *key)
 {
   if(regEnabled) {
     LONG res = RegDeleteValue(vbKey,
@@ -210,11 +210,11 @@ void regDeleteValue(char *key)
   }
 }
 
-bool regCreateFileType( const char *ext, const char *type )
+bool regCreateFileType(const TCHAR *ext, const TCHAR *type)
 {
 	HKEY key;
 	CString temp;
-	temp.Format( "Software\\Classes\\%s", ext );
+	temp.Format(_T("Software\\Classes\\%s"), ext );
 	LONG res = RegCreateKeyEx(
 		HKEY_CURRENT_USER,
 		temp,
@@ -228,7 +228,7 @@ bool regCreateFileType( const char *ext, const char *type )
 	if( res == ERROR_SUCCESS ) {
 		RegSetValueEx(
 			key,
-			"",
+			_T(""),
 			0,
 			REG_SZ,
 			(const BYTE *)type,
@@ -241,11 +241,11 @@ bool regCreateFileType( const char *ext, const char *type )
 	return false;
 }
 
-bool regAssociateType( const char *type, const char *desc, const char *application, const char *icon )
+bool regAssociateType(const TCHAR *type, const TCHAR *desc, const TCHAR *application, const TCHAR *icon)
 {
 	HKEY key;
 	CString temp;
-	temp.Format( "Software\\Classes\\%s", type );
+	temp.Format(_T("Software\\Classes\\%s"), type );
 	LONG res = RegCreateKeyEx(
 		HKEY_CURRENT_USER,
 		temp,
@@ -259,7 +259,7 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 	if( res == ERROR_SUCCESS ) {
 		res = RegSetValueEx(
 			key,
-			"",//"FriendlyTypeName",
+			_T(""),//"FriendlyTypeName",
 			0,
 			REG_SZ,
 			(const BYTE *)desc,
@@ -267,7 +267,7 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 		HKEY key2;
 		res = RegCreateKeyEx(
 			key,
-			"Shell\\Open\\Command",
+			_T("Shell\\Open\\Command"),
 			0,
 			NULL,
 			REG_OPTION_NON_VOLATILE,
@@ -278,7 +278,7 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 		if( res == ERROR_SUCCESS ) {
 			RegSetValueEx(
 				key2,
-				"",
+				_T(""),
 				0,
 				REG_SZ,
 				(const BYTE *)application,
@@ -287,7 +287,7 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 				HKEY key3;
 				res = RegCreateKeyEx(
 					key,
-					"DefaultIcon",
+					_T("DefaultIcon"),
 					0,
 					NULL,
 					REG_OPTION_NON_VOLATILE,
@@ -298,7 +298,7 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 				if( res == ERROR_SUCCESS ) {
 					RegSetValueEx(
 						key3,
-						"",
+						_T(""),
 						0,
 						REG_SZ,
 						(const BYTE *)icon,
@@ -317,9 +317,9 @@ bool regAssociateType( const char *type, const char *desc, const char *applicati
 	return false;
 }
 
-static void regExportSettingsToINI(HKEY key, const char *section)
+static void regExportSettingsToINI(HKEY key, const TCHAR *section)
 {
-  char valueName[256];
+    TCHAR valueName[256];
   int index = 0;
   while(1) {
     DWORD nameSize = 256;
@@ -338,8 +338,8 @@ static void regExportSettingsToINI(HKEY key, const char *section)
       switch(type) {
       case REG_DWORD:
         {
-          char temp[256];
-          wsprintf(temp, "%u", *((DWORD *)buffer));
+          TCHAR temp[256];
+          wsprintf(temp, _T("%u"), *((DWORD *)buffer));
           WritePrivateProfileString(section,
                                     valueName,
                                     temp,
@@ -354,9 +354,9 @@ static void regExportSettingsToINI(HKEY key, const char *section)
         break;
       case REG_BINARY:
         {
-          char temp[256];
+          TCHAR temp[256];
 
-          wsprintf(temp, "%u", size);
+          wsprintf(temp, _T("%u"), size);
           CString k = valueName;
           k += "Count";
           WritePrivateProfileString(section,
@@ -386,9 +386,9 @@ void regExportSettingsToINI()
   HKEY key;
 
   if(RegOpenKey(HKEY_CURRENT_USER,
-                "Software\\Emulators\\VisualBoyAdvance\\Viewer", &key) ==
+                _T("Software\\Emulators\\VisualBoyAdvance\\Viewer"), &key) ==
      ERROR_SUCCESS) {
-    regExportSettingsToINI(key, "Viewer");
+    regExportSettingsToINI(key, _T("Viewer"));
     RegCloseKey(key);
   }
 }

@@ -201,7 +201,7 @@ void MainWnd::OnToolsDebugGdb()
 
       theApp.emulator = GBASystem;
 
-      CPUInit(theApp.biosFileNameGBA, theApp.useBiosFileGBA);
+      CPUInit(CStringA(theApp.biosFileNameGBA), theApp.useBiosFileGBA);
       CPUReset();
     }
   }
@@ -272,7 +272,7 @@ void MainWnd::OnOptionsSoundStartrecording()
 {
   CString captureBuffer;
 
-  CString capdir = regQueryStringValue("soundRecordDir", NULL);
+  CString capdir = regQueryStringValue(_T("soundRecordDir"), NULL);
 
   if(capdir.IsEmpty())
     capdir = getDirFromFile(theApp.filename);
@@ -280,9 +280,9 @@ void MainWnd::OnOptionsSoundStartrecording()
   CString filter = theApp.winLoadFilter(IDS_FILTER_WAV);
   CString title = winResLoadString(IDS_SELECT_WAV_NAME);
 
-  LPCTSTR exts[] = { ".WAV" };
+  LPCTSTR exts[] = { _T(".WAV") };
 
-  FileDlg dlg(this, "", filter, 1, "WAV", exts, capdir, title, true);
+  FileDlg dlg(this, _T(""), filter, 1, _T("WAV"), exts, capdir, title, true);
 
   if(dlg.DoModal() == IDCANCEL) {
     return;
@@ -299,7 +299,7 @@ void MainWnd::OnOptionsSoundStartrecording()
 
   if(len > 3 && captureBuffer[len-1] == '\\')
     captureBuffer = captureBuffer.Left(len-1);
-  regSetStringValue("soundRecordDir", captureBuffer);
+  regSetStringValue(_T("soundRecordDir"), captureBuffer);
 }
 
 void MainWnd::OnUpdateOptionsSoundStartrecording(CCmdUI* pCmdUI)
@@ -325,7 +325,7 @@ void MainWnd::OnUpdateOptionsSoundStoprecording(CCmdUI* pCmdUI)
 void MainWnd::OnToolsRecordStartavirecording()
 {
 	CString captureBuffer;
-	CString capdir = regQueryStringValue( "aviRecordDir", NULL );
+	CString capdir = regQueryStringValue( _T("aviRecordDir"), NULL );
 
 	if( capdir.IsEmpty() ) {
 		capdir = getDirFromFile( theApp.filename );
@@ -334,9 +334,9 @@ void MainWnd::OnToolsRecordStartavirecording()
 	CString filter = theApp.winLoadFilter( IDS_FILTER_AVI );
 	CString title = winResLoadString( IDS_SELECT_AVI_NAME );
 
-	LPCTSTR exts[] = { ".AVI" };
+	LPCTSTR exts[] = { _T(".AVI") };
 
-	FileDlg dlg( this, "", filter, 1, "AVI", exts, capdir, title, true );
+	FileDlg dlg( this, _T(""), filter, 1, _T("AVI"), exts, capdir, title, true );
 
 	if( dlg.DoModal() == IDCANCEL ) {
 		return;
@@ -356,7 +356,7 @@ void MainWnd::OnToolsRecordStartavirecording()
 		captureBuffer = captureBuffer.Left( len - 1 );
 	}
 
-	regSetStringValue( "aviRecordDir", captureBuffer );
+	regSetStringValue( _T("aviRecordDir"), captureBuffer );
 
 
 	// create AVI file
@@ -435,7 +435,7 @@ void MainWnd::OnUpdateToolsRecordStopavirecording(CCmdUI* pCmdUI)
 void MainWnd::OnToolsRecordStartmovierecording()
 {
   CString captureBuffer;
-  CString capdir = regQueryStringValue("movieRecordDir", "");
+  CString capdir = regQueryStringValue(_T("movieRecordDir"), _T(""));
 
   if(capdir.IsEmpty())
     capdir = getDirFromFile(theApp.filename);
@@ -443,9 +443,9 @@ void MainWnd::OnToolsRecordStartmovierecording()
   CString filter = theApp.winLoadFilter(IDS_FILTER_VMV);
   CString title = winResLoadString(IDS_SELECT_MOVIE_NAME);
 
-  LPCTSTR exts[] = { ".VMV" };
+  LPCTSTR exts[] = { _T(".VMV") };
 
-  FileDlg dlg(this, "", filter, 1, "VMV", exts, capdir, title, true);
+  FileDlg dlg(this, _T(""), filter, 1, _T("VMV"), exts, capdir, title, true);
 
   if(dlg.DoModal() == IDCANCEL) {
     return;
@@ -463,13 +463,13 @@ void MainWnd::OnToolsRecordStartmovierecording()
   if(len > 3 && captureBuffer[len-1] == '\\')
     captureBuffer = captureBuffer.Left(len-1);
 
-  regSetStringValue("movieRecordDir", captureBuffer);
+  regSetStringValue(_T("movieRecordDir"), captureBuffer);
 
-  theApp.movieFile = fopen(movieName, "wb");
+  theApp.movieFile = _tfopen(movieName, _T("wb"));
 
   if(!theApp.movieFile) {
     systemMessage(IDS_CANNOT_OPEN_FILE, "Cannot open file %s",
-                  (const char *)movieName);
+                  CStringA(movieName));
     return;
   }
 
@@ -477,7 +477,7 @@ void MainWnd::OnToolsRecordStartmovierecording()
 
   fwrite(&version, 1, sizeof(int), theApp.movieFile);
 
-  movieName = movieName.Left(movieName.GetLength()-3) + "VM0";
+  movieName = movieName.Left(movieName.GetLength()-3) + _T("VM0");
 
   if(writeSaveGame(movieName)) {
     theApp.movieFrame = 0;
@@ -486,7 +486,7 @@ void MainWnd::OnToolsRecordStartmovierecording()
     theApp.moviePlaying = false;
   } else {
     systemMessage(IDS_CANNOT_OPEN_FILE, "Cannot open file %s",
-                  (const char *)movieName);
+                  CStringA(movieName));
   }
 }
 
@@ -532,7 +532,7 @@ void MainWnd::OnToolsPlayStartmovieplaying()
   }
 
   CString captureBuffer;
-  CString capdir = regQueryStringValue("movieRecordDir", "");
+  CString capdir = regQueryStringValue(_T("movieRecordDir"), _T(""));
 
   if(capdir.IsEmpty())
     capdir = getDirFromFile(theApp.filename);
@@ -540,9 +540,9 @@ void MainWnd::OnToolsPlayStartmovieplaying()
   CString filter = theApp.winLoadFilter(IDS_FILTER_VMV);
   CString title = winResLoadString(IDS_SELECT_MOVIE_NAME);
 
-  LPCTSTR exts[] = { ".VMV" };
+  LPCTSTR exts[] = { _T(".VMV") };
 
-  FileDlg dlg(this, "", filter, 1, "VMV", exts, capdir, title, false);
+  FileDlg dlg(this, _T(""), filter, 1, _T("VMV"), exts, capdir, title, false);
 
   if(dlg.DoModal() == IDCANCEL) {
     return;
@@ -551,11 +551,11 @@ void MainWnd::OnToolsPlayStartmovieplaying()
   CString movieName = dlg.GetPathName();
   captureBuffer = movieName;
 
-  theApp.movieFile = fopen(movieName, "rb");
+  theApp.movieFile = _tfopen(movieName, _T("rb"));
 
   if(!theApp.movieFile) {
     systemMessage(IDS_CANNOT_OPEN_FILE, "Cannot open file %s",
-                  (const char *)movieName);
+                  CStringA(movieName));
     return;
   }
   int version = 0;
@@ -568,7 +568,7 @@ void MainWnd::OnToolsPlayStartmovieplaying()
     theApp.movieFile = NULL;
     return;
   }
-  movieName = movieName.Left(movieName.GetLength()-3)+"VM0";
+  movieName = movieName.Left(movieName.GetLength()-3)+_T("VM0");
   if(loadSaveGame(movieName)) {
     theApp.moviePlaying = true;
     theApp.movieFrame = 0;
@@ -577,7 +577,7 @@ void MainWnd::OnToolsPlayStartmovieplaying()
     theApp.movieReadNext();
   } else {
     systemMessage(IDS_CANNOT_OPEN_FILE, "Cannot open file %s",
-                  (const char *)movieName);
+                  CStringA(movieName));
   }
 }
 

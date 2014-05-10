@@ -96,7 +96,7 @@ void GBDisassemble::OnGo()
   CString buffer;
 
   m_address.GetWindowText(buffer);
-  sscanf(buffer, "%hx", &address);
+  _stscanf(buffer, _T("%hx"), &address);
   refresh();
 }
 
@@ -133,7 +133,7 @@ BOOL GBDisassemble::OnInitDialog()
     SetData(sz,
             TRUE,
             HKEY_CURRENT_USER,
-            "Software\\Emulators\\VisualBoyAdvance\\Viewer\\GBDisassembleView",
+            _T("Software\\Emulators\\VisualBoyAdvance\\Viewer\\GBDisassembleView"),
             NULL);
 
   SCROLLINFO si;
@@ -195,35 +195,37 @@ void GBDisassemble::refresh()
   if(!emulating || theApp.cartridgeType != 1)
     return;
 
-  char buffer[80];
+  char disasm[80];
   u16 addr = address;
   int i;
   int sel = -1;
   for(i = 0; i < count; i++) {
     if(addr == PC.W)
       sel = i;
-    addr += gbDis(buffer, addr);
-    m_list.InsertString(-1, buffer);
+    addr += gbDis(disasm, addr);
+    m_list.InsertString(-1, CString(disasm));
   }
   lastAddress = addr-1;
   if(sel != -1)
     m_list.SetCurSel(sel);
 
-  sprintf(buffer, "%04x", AF.W);
+  TCHAR buffer[80];
+
+  _stprintf(buffer, _T("%04x"), AF.W);
   GetDlgItem(IDC_R0)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", BC.W);
+  _stprintf(buffer, _T("%04x"), BC.W);
   GetDlgItem(IDC_R1)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", DE.W);
+  _stprintf(buffer, _T("%04x"), DE.W);
   GetDlgItem(IDC_R2)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", HL.W);
+  _stprintf(buffer, _T("%04x"), HL.W);
   GetDlgItem(IDC_R3)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", SP.W);
+  _stprintf(buffer, _T("%04x"), SP.W);
   GetDlgItem(IDC_R4)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", PC.W);
+  _stprintf(buffer, _T("%04x"), PC.W);
   GetDlgItem(IDC_R5)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", IFF);
+  _stprintf(buffer, _T("%04x"), IFF);
   GetDlgItem(IDC_R6)->SetWindowText(buffer);
-  sprintf(buffer, "%04x", register_LY);
+  _stprintf(buffer, _T("%04x"), register_LY);
   GetDlgItem(IDC_LY)->SetWindowText(buffer);
 
   m_z = (AF.B.B0 & 0x80) != 0;

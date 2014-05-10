@@ -76,7 +76,7 @@ BOOL FullscreenSettings::OnInitDialog()
 		for( UINT i = 0 ; i < nAdapters ; i++ ) {
 			D3DADAPTER_IDENTIFIER9 id;
 			pD3D->GetAdapterIdentifier( i, 0, &id );
-			int index = combo_device.AddString( id.Description );
+			int index = combo_device.AddString( CString(id.Description) );
 			combo_device.SetItemData( index, (DWORD_PTR)i );
 		}
 		combo_device.SetCurSel( 0 );

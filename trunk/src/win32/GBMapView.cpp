@@ -89,11 +89,11 @@ GBMapView::~GBMapView()
   data = NULL;
 }
 
-void GBMapView::saveBMP(const char *name)
+void GBMapView::saveBMP(LPCTSTR name)
 {
   u8 writeBuffer[1024 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s", name);
@@ -156,11 +156,11 @@ void GBMapView::saveBMP(const char *name)
   fclose(fp);
 }
 
-void GBMapView::savePNG(const char *name)
+void GBMapView::savePNG(LPCTSTR name)
 {
   u8 writeBuffer[1024 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s", name);
@@ -237,11 +237,11 @@ void GBMapView::OnSave()
   CString filename;
 
   if(theApp.captureFormat == 0)
-    filename = "map.png";
+    filename = _T("map.png");
   else
-    filename = "map.bmp";
+    filename = _T("map.bmp");
 
-  LPCTSTR exts[] = {".png", ".bmp" };
+  LPCTSTR exts[] = {_T(".png"), _T(".bmp") };
   CString title = winResLoadString(IDS_SELECT_CAPTURE_NAME);
   CString filter = theApp.winLoadFilter(IDS_FILTER_PNG);
 
@@ -249,9 +249,9 @@ void GBMapView::OnSave()
               filename,
               filter,
               theApp.captureFormat ? 2 : 1,
-              theApp.captureFormat ? "BMP" : "PNG",
+              theApp.captureFormat ? _T("BMP") : _T("PNG"),
               exts,
-              "",
+              _T(""),
               title,
               true);
 
@@ -394,10 +394,10 @@ BOOL GBMapView::OnInitDialog()
     SetData(sz,
             TRUE,
             HKEY_CURRENT_USER,
-            "Software\\Emulators\\VisualBoyAdvance\\Viewer\\GBMapView",
+            _T("Software\\Emulators\\VisualBoyAdvance\\Viewer\\GBMapView"),
             NULL);
 
-  int s = regQueryDwordValue("mapViewStretch", 0);
+  int s = regQueryDwordValue(_T("mapViewStretch"), 0);
   if(s)
     mapView.setStretch(true);
   ((CButton *)GetDlgItem(IDC_STRETCH))->SetCheck(s);
@@ -444,7 +444,7 @@ void GBMapView::OnStretch()
 {
   mapView.setStretch(!mapView.getStretch());
   paint();
-  regSetDwordValue("mapViewStretch", mapView.getStretch());
+  regSetDwordValue(_T("mapViewStretch"), mapView.getStretch());
 }
 
 void GBMapView::OnAutoUpdate()
@@ -482,11 +482,11 @@ LRESULT GBMapView::OnMapInfo(WPARAM wParam, LPARAM lParam)
   int y = (int)(wParam >> 16);
 
   CString buffer;
-  buffer.Format("(%d,%d)", x, y);
+  buffer.Format(_T("(%d,%d)"), x, y);
   GetDlgItem(IDC_XY)->SetWindowText(buffer);
 
   u32 address = GetClickAddress(x,y);
-  buffer.Format("0x%08X", address);
+  buffer.Format(_T("0x%08X"), address);
   GetDlgItem(IDC_ADDRESS)->SetWindowText(buffer);
 
   u8 attrs = 0;
@@ -502,7 +502,7 @@ LRESULT GBMapView::OnMapInfo(WPARAM wParam, LPARAM lParam)
     else tile += 128;
   }
 
-  buffer.Format("%d", tile);
+  buffer.Format(_T("%d"), tile);
   GetDlgItem(IDC_TILE_NUM)->SetWindowText(buffer);
 
   buffer.Empty();
@@ -511,9 +511,9 @@ LRESULT GBMapView::OnMapInfo(WPARAM wParam, LPARAM lParam)
   GetDlgItem(IDC_FLIP)->SetWindowText(buffer);
 
   if(gbCgbMode) {
-    buffer.Format("%d", (attrs & 7));
+    buffer.Format(_T("%d"), (attrs & 7));
   } else
-    buffer = "---";
+    buffer = _T("---");
   GetDlgItem(IDC_PALETTE_NUM)->SetWindowText(buffer);
 
   buffer.Empty();
@@ -537,13 +537,13 @@ LRESULT GBMapView::OnColInfo(WPARAM wParam, LPARAM)
   int b = (c & 0x7c00) >> 10;
 
   CString buffer;
-  buffer.Format("R: %d", r);
+  buffer.Format(_T("R: %d"), r);
   GetDlgItem(IDC_R)->SetWindowText(buffer);
 
-  buffer.Format("G: %d", g);
+  buffer.Format(_T("G: %d"), g);
   GetDlgItem(IDC_G)->SetWindowText(buffer);
 
-  buffer.Format("B: %d", b);
+  buffer.Format(_T("B: %d"), b);
   GetDlgItem(IDC_B)->SetWindowText(buffer);
 
   return TRUE;

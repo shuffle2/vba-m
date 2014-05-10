@@ -52,7 +52,7 @@ void SelectPlugin::OnOK()
 	{
 		int nSel = m_comboPlugin.GetCurSel();
 		if (nSel >= 0 && nSel < (int)rpiPool.size())
-			strcpy(theApp.pluginName, rpiPool[nSel].sFile);
+			_tcscpy(theApp.pluginName, rpiPool[nSel].sFile);
 	}
 
 	CDialog::OnOK();
@@ -75,11 +75,11 @@ BOOL SelectPlugin::OnInitDialog()
 	if (nPluginCnt > 0)
 	{
 		for (size_t i = 0; i < rpiPool.size(); i++)
-			m_comboPlugin.AddString(rpiPool[i].sDesc);
+			m_comboPlugin.AddString(CString(rpiPool[i].sDesc));
 
 		for (size_t ii = 0; ii < rpiPool.size(); ii++)
 		{
-			if (_stricmp(theApp.pluginName, rpiPool[ii].sFile) == 0)
+			if (_tcsicmp(theApp.pluginName, rpiPool[ii].sFile) == 0)
 			{
 				m_comboPlugin.SetCurSel(ii);
 				break;
@@ -96,14 +96,14 @@ size_t SelectPlugin::EnumPlugins()
 {
 	rpiPool.clear();
 
-	char sFindFile[MAX_PATH];
-	char *ptr;
+	TCHAR sFindFile[MAX_PATH];
+	TCHAR *ptr;
 
 	GetModuleFileName(NULL, sFindFile, sizeof(sFindFile));
-	ptr = strrchr(sFindFile, '\\');
+	ptr = _tcsrchr(sFindFile, '\\');
 	if (ptr)
 		*ptr = '\0';
-	strcat(sFindFile, "\\plugins\\*.rpi");
+	_tcscat(sFindFile, _T("\\plugins\\*.rpi"));
 
 	PluginDesc plugDesc;
 	WIN32_FIND_DATA FindFileData;
@@ -131,18 +131,18 @@ size_t SelectPlugin::EnumPlugins()
 	return rpiPool.size();
 }
 
-bool SelectPlugin::GetPluginDesc(const char *sRpi, PluginDesc *pDesc)
+bool SelectPlugin::GetPluginDesc(TCHAR *sRpi, PluginDesc *pDesc)
 {
 	HINSTANCE rpiDLL = NULL;
-	char sFile[MAX_PATH];
-	char *ptr;
+	TCHAR sFile[MAX_PATH];
+	TCHAR *ptr;
 
 	GetModuleFileName(NULL, sFile, sizeof(sFile));
-	ptr = strrchr(sFile, '\\');
+	ptr = _tcsrchr(sFile, '\\');
 	if (ptr)
 		*ptr = '\0';
-	strcat(sFile, "\\plugins\\");
-	strcat(sFile, sRpi);
+	_tcscat(sFile, _T("\\plugins\\"));
+	_tcscat(sFile, sRpi);
 
   	rpiDLL = LoadLibrary(sFile);
   	if (!rpiDLL)
@@ -165,8 +165,8 @@ bool SelectPlugin::GetPluginDesc(const char *sRpi, PluginDesc *pDesc)
 	}
 
 	memset(pDesc, 0, sizeof(PluginDesc));
-	strcpy(pDesc->sFile, sRpi);
-	strcpy(pDesc->sDesc, pRPI->Name);
+	_tcscpy(pDesc->sFile, sRpi);
+	strncpy(pDesc->sDesc, pRPI->Name, ARRAYSIZE(pDesc->sDesc));
 	FreeLibrary(rpiDLL);
 
 	return true;

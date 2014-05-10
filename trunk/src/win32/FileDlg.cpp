@@ -96,10 +96,11 @@ FileDlg::FileDlg(CWnd *parent, LPCTSTR file, LPCTSTR filter,
 	m_ofn.Flags |= OFN_READONLY;
   m_filter = filter;
 
-  char *p = m_filter.GetBuffer(0);
+  TCHAR *p = m_filter.GetBuffer(0);
 
-  while ((p = strchr(p, '|')) != NULL)
-    *p++ = 0;
+  while ((p = _tcschr(p, _T('|'))) != NULL) {
+      *p++ = 0;
+  }
   m_ofn.lpstrFilter = m_filter;
 
   if(theApp.videoOption == VIDEO_320x240) {
@@ -147,11 +148,11 @@ void FileDlg::OnTypeChange(HWND hwnd)
   LPCTSTR typeName = extensions[sel];
 
   if(filename.GetLength() == 0) {
-    if(strlen(typeName) != 0)
-      filename.Format("*%s", typeName);
+    if(_tcslen(typeName) != 0)
+      filename.Format(_T("*%s"), typeName);
   } else {
-    if(strlen(typeName) != 0) {
-      int index = filename.Find('.');
+      if (_tcslen(typeName) != 0) {
+      int index = filename.Find(_T('.'));
       if (index == -1) {
         filename = filename + typeName;
       } else {

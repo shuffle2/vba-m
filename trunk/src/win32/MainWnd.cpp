@@ -433,13 +433,16 @@ bool MainWnd::FileRun()
     end_apu_log();
 #endif
   }
-  char tempName[2048];
-  char file[2048];
+  char tempNameA[2048];
+  TCHAR file[2048];
   CString oldFile = theApp.filename;
 
-  utilStripDoubleExtension(theApp.szFile, tempName);
+  utilStripDoubleExtension(CStringA(theApp.szFile), tempNameA);
+  CString tempName;
+  tempName.Preallocate(ARRAYSIZE(tempNameA));
+  tempName = tempNameA;
 
-  _fullpath(file, tempName, 2048);
+  _tfullpath(file, tempName, 2048);
   theApp.filename = file;
 
   int index = theApp.filename.ReverseFind('.');
@@ -453,11 +456,11 @@ bool MainWnd::FileRun()
   }
 
   CString patchName;
-  patchName.Format("%s.ips", theApp.filename);
+  patchName.Format(_T("%s.ips"), theApp.filename);
   if( !fileExists( patchName ) ) {
-	  patchName.Format("%s.ups", theApp.filename);
+	  patchName.Format(_T("%s.ups"), theApp.filename);
 	  if( !fileExists( patchName ) ) {
-		  patchName.Format("%s.ppf", theApp.filename);
+		  patchName.Format(_T("%s.ppf"), theApp.filename);
 		  if( !fileExists( patchName ) ) {
 			  // don't use any patches
 			  patchName.Empty();
@@ -473,7 +476,7 @@ bool MainWnd::FileRun()
     }
   }
 
-  IMAGE_TYPE type = utilFindType(theApp.szFile);
+  IMAGE_TYPE type = utilFindType(CStringA(theApp.szFile));
 
   if(type == IMAGE_UNKNOWN) {
     systemMessage(IDS_UNSUPPORTED_FILE_TYPE,
@@ -483,8 +486,8 @@ bool MainWnd::FileRun()
   systemSaveUpdateCounter = SYSTEM_SAVE_NOT_UPDATED;
   theApp.cartridgeType = type;
   if(type == IMAGE_GB) {
-    if(!gbLoadRom(theApp.szFile))
-      return false;
+      if (!gbLoadRom(CStringA(theApp.szFile)))
+        return false;
 
     gbGetHardwareType();
 
@@ -492,7 +495,7 @@ bool MainWnd::FileRun()
     if (gbHardware & 5)
     {
       skipBios = theApp.skipBiosFile;
-	  gbCPUInit(theApp.biosFileNameGB, theApp.useBiosFileGB);
+	  gbCPUInit(CStringA(theApp.biosFileNameGB), theApp.useBiosFileGB);
     }
 
 
@@ -505,7 +508,7 @@ bool MainWnd::FileRun()
 
     if(theApp.autoPatch && !patchName.IsEmpty()) {
       int size = gbRomSize;
-      applyPatch(patchName, &gbRom, &size);
+      applyPatch(CStringA(patchName), &gbRom, &size);
       if(size != gbRomSize) {
         extern bool gbUpdateSizes();
         gbUpdateSizes();
@@ -514,7 +517,7 @@ bool MainWnd::FileRun()
       }
     }
   } else {
-    int size = CPULoadRom(theApp.szFile);
+      int size = CPULoadRom(CStringA(theApp.szFile));
     if(!size)
       return false;
 
@@ -524,40 +527,41 @@ bool MainWnd::FileRun()
     rtcEnable(theApp.winRtcEnable);
     cpuSaveType = theApp.winSaveType;
 
-    GetModuleFileName(NULL, tempName, 2048);
+    TCHAR *tempBuffer = tempName.GetBuffer();
 
-    char *p = strrchr(tempName, '\\');
+    GetModuleFileName(NULL, tempBuffer, 2048);
+
+    TCHAR *p = _tcsrchr(tempBuffer, '\\');
     if(p)
       *p = 0;
 
-    char buffer[5];
-    strncpy(buffer, (const char *)&rom[0xac], 4);
-    buffer[4] = 0;
+    CString bufferA((const char *)&rom[0xac], 4);
+    CString buffer(bufferA);
 
-    strcat(tempName, "\\vba-over.ini");
+    _tcscat(tempBuffer, _T("\\vba-over.ini"));
 
     UINT i = GetPrivateProfileInt(buffer,
-					                "rtcEnabled",
+					                _T("rtcEnabled"),
                                   -1,
                                   tempName);
     if(i != (UINT)-1)
       rtcEnable(i == 0 ? false : true);
 
     i = GetPrivateProfileInt(buffer,
-                             "flashSize",
+                             _T("flashSize"),
                              -1,
                              tempName);
     if(i != (UINT)-1 && (i == 0x10000 || i == 0x20000))
       flashSetSize((int)i);
 
     i = GetPrivateProfileInt(buffer,
-                             "saveType",
+                             _T("saveType"),
                              -1,
                              tempName);
     if(i != (UINT)-1 && (i <= 5))
       cpuSaveType = (int)i;
     i = GetPrivateProfileInt(buffer,
-                             "mirroringEnabled",
+                             _T("mirroringEnabled"),
                              -1,
                              tempName);
     if(i != (UINT)-1)
@@ -572,7 +576,7 @@ bool MainWnd::FileRun()
 
     if(theApp.autoPatch && !patchName.IsEmpty()) {
       int size = 0x2000000;
-      applyPatch(patchName, &rom, &size);
+      applyPatch(CStringA(patchName), &rom, &size);
       if(size != 0x2000000) {
         CPUReset();
       }
@@ -595,7 +599,7 @@ bool MainWnd::FileRun()
 
   if(type == IMAGE_GBA) {
     skipBios = theApp.skipBiosFile;
-    CPUInit(theApp.biosFileNameGBA.GetString(), theApp.useBiosFileGBA);
+    CPUInit(CStringA(theApp.biosFileNameGBA), theApp.useBiosFileGBA);
     CPUReset();
   }
 
@@ -719,8 +723,8 @@ void MainWnd::OnMove(int x, int y)
         theApp.windowPositionX = r.left;
         theApp.windowPositionY = r.top;
         theApp.adjustDestRect();
-        regSetDwordValue("windowX", theApp.windowPositionX);
-        regSetDwordValue("windowY", theApp.windowPositionY);
+        regSetDwordValue(_T("windowX"), theApp.windowPositionX);
+        regSetDwordValue(_T("windowY"), theApp.windowPositionY);
       }
     }
   }
@@ -809,15 +813,15 @@ void MainWnd::winSaveCheatListDefault()
     name = theApp.filename.Right(theApp.filename.GetLength()-index-1);
   else
     name = theApp.filename;
-  CString dir = regQueryStringValue("saveDir", NULL);
+  CString dir = regQueryStringValue(_T("saveDir"), NULL);
   if( dir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, dir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, dir );
 	  dir = baseDir;
 	}
 
@@ -825,19 +829,19 @@ void MainWnd::winSaveCheatListDefault()
     dir = getDirFromFile(filename);
 
   if(isDriveRoot(dir))
-    filename.Format("%s%s.clt", dir, name);
+    filename.Format(_T("%s%s.clt"), dir, name);
   else
-    filename.Format("%s\\%s.clt", dir, name);
+    filename.Format(_T("%s\\%s.clt"), dir, name);
 
   winSaveCheatList(filename);
 }
 
-void MainWnd::winSaveCheatList(const char *name)
+void MainWnd::winSaveCheatList(LPCTSTR name)
 {
   if(theApp.cartridgeType == 0)
-    cheatsSaveCheatList(name);
+    cheatsSaveCheatList(CStringA(name));
   else
-    gbCheatsSaveCheatList(name);
+    gbCheatsSaveCheatList(CStringA(name));
 }
 
 void MainWnd::winLoadCheatListDefault()
@@ -851,15 +855,15 @@ void MainWnd::winLoadCheatListDefault()
     name = theApp.filename.Right(theApp.filename.GetLength()-index-1);
   else
     name = theApp.filename;
-  CString dir = regQueryStringValue("saveDir", NULL);
+  CString dir = regQueryStringValue(_T("saveDir"), NULL);
   if( dir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, dir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, dir );
 	  dir = baseDir;
 	}
 
@@ -867,24 +871,24 @@ void MainWnd::winLoadCheatListDefault()
     dir = getDirFromFile(filename);
 
   if(isDriveRoot(dir))
-    filename.Format("%s%s.clt", dir, name);
+    filename.Format(_T("%s%s.clt"), dir, name);
   else
-    filename.Format("%s\\%s.clt", dir, name);
+    filename.Format(_T("%s\\%s.clt"), dir, name);
 
   winLoadCheatList(filename);
 }
 
-void MainWnd::winLoadCheatList(const char *name)
+void MainWnd::winLoadCheatList(LPCTSTR name)
 {
   bool res = false;
 
   if(theApp.cartridgeType == 0)
-    res = cheatsLoadCheatList(name);
+      res = cheatsLoadCheatList(CStringA(name));
   else
-    res = gbCheatsLoadCheatList(name);
+      res = gbCheatsLoadCheatList(CStringA(name));
 
   if(res)
-    systemScreenMessage(winResLoadString(IDS_LOADED_CHEATS));
+      systemScreenMessage(CStringA(winResLoadString(IDS_LOADED_CHEATS)));
 }
 
 CString MainWnd::getDirFromFile(CString& file)
@@ -895,9 +899,9 @@ CString MainWnd::getDirFromFile(CString& file)
   if(index != -1) {
     temp = temp.Left(index);
     if(temp.GetLength() == 2 && temp[1] == ':')
-      temp += "\\";
+      temp += _T("\\");
   } else {
-    temp = "";
+    temp = _T("");
   }
   return temp;
 }
@@ -923,15 +927,15 @@ void MainWnd::writeBatteryFile()
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("batteryDir", NULL);
+  CString saveDir = regQueryStringValue(_T("batteryDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -939,12 +943,12 @@ void MainWnd::writeBatteryFile()
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.sav", saveDir, buffer);
+    filename.Format(_T("%s%s.sav"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.sav", saveDir, buffer);
+    filename.Format(_T("%s\\%s.sav"), saveDir, buffer);
 
   if(theApp.emulator.emuWriteBattery)
-    theApp.emulator.emuWriteBattery(MakeInstanceFilename((const char *)filename));
+    theApp.emulator.emuWriteBattery(MakeInstanceFilename(CStringA(filename)));
 }
 
 
@@ -960,15 +964,15 @@ void MainWnd::readBatteryFile()
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("batteryDir", NULL);
+  CString saveDir = regQueryStringValue(_T("batteryDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -976,17 +980,17 @@ void MainWnd::readBatteryFile()
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.sav", saveDir, buffer);
+    filename.Format(_T("%s%s.sav"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.sav", saveDir, buffer);
+    filename.Format(_T("%s\\%s.sav"), saveDir, buffer);
 
   bool res = false;
 
   if(theApp.emulator.emuReadBattery)
-    res = theApp.emulator.emuReadBattery(MakeInstanceFilename(filename));
+    res = theApp.emulator.emuReadBattery(MakeInstanceFilename(CStringA(filename)));
 
   if(res)
-    systemScreenMessage(winResLoadString(IDS_LOADED_BATTERY));
+    systemScreenMessage(CStringA(winResLoadString(IDS_LOADED_BATTERY)));
 }
 
 CString MainWnd::winLoadFilter(UINT id)
@@ -997,17 +1001,17 @@ CString MainWnd::winLoadFilter(UINT id)
   return res;
 }
 
-bool MainWnd::loadSaveGame(const char *name)
+bool MainWnd::loadSaveGame(LPCTSTR name)
 {
   if(theApp.emulator.emuReadState)
-    return theApp.emulator.emuReadState(name);
+    return theApp.emulator.emuReadState(CStringA(name));
   return false;
 }
 
-bool MainWnd::writeSaveGame(const char *name)
+bool MainWnd::writeSaveGame(LPCTSTR name)
 {
   if(theApp.emulator.emuWriteState)
-    return theApp.emulator.emuWriteState(name);
+    return theApp.emulator.emuWriteState(CStringA(name));
   return false;
 }
 
@@ -1064,12 +1068,12 @@ bool MainWnd::fileOpenSelect( int system )
 
 	if( initialDir[0] == '.' ) {
 		// handle as relative path
-		char baseDir[MAX_PATH+1];
+		TCHAR baseDir[MAX_PATH+1];
 		GetModuleFileName( NULL, baseDir, MAX_PATH );
 		baseDir[MAX_PATH] = '\0'; // for security reasons
 		PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-		strcat( baseDir, "\\" );
-		strcat( baseDir, initialDir );
+		_tcscat( baseDir, _T("\\") );
+		_tcscat( baseDir, initialDir );
 		initialDir = baseDir;
 	}
 
@@ -1123,15 +1127,15 @@ void MainWnd::screenCapture(int captureNumber)
 {
   CString buffer;
 
-  CString captureDir = regQueryStringValue("captureDir", "");
+  CString captureDir = regQueryStringValue(_T("captureDir"), _T(""));
   if( captureDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, captureDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, captureDir );
 	  captureDir = baseDir;
 	}
 
@@ -1146,18 +1150,18 @@ void MainWnd::screenCapture(int captureNumber)
   if(captureDir.IsEmpty())
     captureDir = getDirFromFile(theApp.filename);
 
-  LPCTSTR ext = "png";
+  LPCTSTR ext = _T("png");
   if(theApp.captureFormat != 0)
-    ext = "bmp";
+    ext = _T("bmp");
 
   if(isDriveRoot(captureDir))
-    buffer.Format("%s%s_%02d.%s",
+    buffer.Format(_T("%s%s_%02d.%s"),
                   captureDir,
                   name,
                   captureNumber,
                   ext);
   else
-    buffer.Format("%s\\%s_%02d.%s",
+    buffer.Format(_T("%s\\%s_%02d.%s"),
                   captureDir,
                   name,
                   captureNumber,
@@ -1171,12 +1175,12 @@ void MainWnd::screenCapture(int captureNumber)
   }
 
   if(theApp.captureFormat == 0)
-    theApp.emulator.emuWritePNG(buffer);
+      theApp.emulator.emuWritePNG(CStringA(buffer));
   else
-    theApp.emulator.emuWriteBMP(buffer);
+      theApp.emulator.emuWriteBMP(CStringA(buffer));
 
   CString msg = winResLoadString(IDS_SCREEN_CAPTURE);
-  systemScreenMessage(msg);
+  systemScreenMessage(CStringA(msg));
 }
 
 void MainWnd::winMouseOn()
@@ -1237,7 +1241,7 @@ void MainWnd::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 
 void MainWnd::OnDropFiles(HDROP hDropInfo)
 {
-  char szFile[1024];
+  TCHAR szFile[1024];
 
   if(DragQueryFile(hDropInfo,
                    0,

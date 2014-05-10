@@ -13,9 +13,9 @@
 
 struct WinCheatsData {
   u32  addr;
-  char address[9];
-  char oldValue[12];
-  char newValue[12];
+  TCHAR address[9];
+  TCHAR oldValue[12];
+  TCHAR newValue[12];
 };
 
 class GBACheatSearch : public CDialog

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <tchar.h>
 #include <gl\gl.h>
 #include "glfont.h"
 
@@ -108,7 +109,7 @@ void glFontEnd (void)
 	glFont = NULL;
 }
 //*********************************************************
-void glFontTextOut (char *String, float x, float y,
+void glFontTextOut (LPCTSTR String, float x, float y,
 	float z)
 {
 	int Length, i;
@@ -119,7 +120,7 @@ void glFontTextOut (char *String, float x, float y,
 		return;
 
 	//Get length of string
-	Length = strlen(String);
+	Length = _tcslen(String);
 
 	//Begin rendering quads
 	glBegin(GL_QUADS);

@@ -152,7 +152,7 @@ CString BugReport::createReport()
   if(emulating) {
     AppendFormat(report, "File         : %s\r\n", theApp.szFile);
 
-    char buffer[20];
+    TCHAR buffer[20];
     if(theApp.cartridgeType == 0) {
       u32 check = 0;
       for(int i = 0; i < 0x4000; i += 4) {

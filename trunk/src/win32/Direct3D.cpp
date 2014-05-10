@@ -1,8 +1,10 @@
 #ifndef NO_D3D
 
 #pragma comment( lib, "d3d9" )
+/*
 #pragma comment( lib, "d3dx9" )
 #pragma comment( lib, "DxErr" )
+*/
 
 #include "stdafx.h"
 
@@ -26,8 +28,12 @@
 #endif
 #define DIRECT3D_VERSION 0x0900
 #include <d3d9.h>      // main include file
-#include <D3dx9core.h> // required for font rendering
-#include <Dxerr.h>     // contains debug functions
+//#include <D3dx9core.h> // required for font rendering
+//#include <Dxerr.h>     // contains debug functions
+
+#define DXTRACE_MSG(str)
+#define DXTRACE_ERR(str, hr)
+#define DXTRACE_ERR_MSGBOX(str,hr)
 
 extern int Init_2xSaI(u32); // initializes all pixel filters
 extern int systemSpeed;
@@ -87,7 +93,7 @@ private:
 	unsigned int          textureSize;
 	RECT                  destRect;
 	bool                  failed;
-	ID3DXFont             *pFont;
+//	ID3DXFont             *pFont;
 	bool                  rectangleFillsScreen;
 	PFTHREAD_DATA         *pfthread_data;
 	HANDLE                *hThreads;
@@ -128,7 +134,7 @@ public:
 
 	virtual bool changeRenderSize( int w, int h );
 	virtual void resize( int w, int h );
-	virtual void setOption( const char *option, int value );
+	virtual void setOption(LPCTSTR option, int value );
 	virtual bool selectFullScreenMode( VIDEO_MODE &mode );
 };
 
@@ -143,7 +149,7 @@ Direct3DDisplay::Direct3DDisplay()
 	height = 0;
 	textureSize = 0;
 	failed = false;
-	pFont = NULL;
+//	pFont = NULL;
 	tempImage = NULL;
 	emulatedImage[0] = NULL;
 	emulatedImage[1] = NULL;
@@ -526,21 +532,22 @@ void Direct3DDisplay::render()
 
 	if( theApp.showSpeed && ( theApp.videoOption > VIDEO_6X ) ) {
 		color = theApp.showSpeedTransparent ? D3DCOLOR_ARGB(0x7F, 0x00, 0x00, 0xFF) : D3DCOLOR_ARGB(0xFF, 0x00, 0x00, 0xFF);
-		char buffer[30];
+		TCHAR buffer[30];
 		if( theApp.showSpeed == 1 ) {
-			sprintf( buffer, "%3d%%", systemSpeed );
+			_stprintf( buffer, _T("%3d%%"), systemSpeed );
 		} else {
-			sprintf( buffer, "%3d%%(%d, %d fps)", systemSpeed, systemFrameSkip, theApp.showRenderedFrames );
+            _stprintf(buffer, _T("%3d%%(%d, %d fps)"), systemSpeed, systemFrameSkip, theApp.showRenderedFrames);
 		}
 
-		pFont->DrawText( NULL, buffer, -1, &r, DT_CENTER | DT_TOP, color );
+//		pFont->DrawText( NULL, buffer, -1, &r, DT_CENTER | DT_TOP, color );
 	}
 
 	if( theApp.screenMessage ) {
 		color = theApp.showSpeedTransparent ? D3DCOLOR_ARGB(0x7F, 0xFF, 0x00, 0x00) : D3DCOLOR_ARGB(0xFF, 0xFF, 0x00, 0x00);
+        /*
 		if( ( ( GetTickCount() - theApp.screenMessageTime ) < 3000 ) && !theApp.disableStatusMessage && pFont ) {
 			pFont->DrawText( NULL, theApp.screenMessageBuffer, -1, &r, DT_CENTER | DT_BOTTOM, color );
-		} else {
+		} else */{
 			theApp.screenMessage = false;
 		}
 	}
@@ -616,6 +623,7 @@ bool Direct3DDisplay::selectFullScreenMode( VIDEO_MODE &mode )
 
 void Direct3DDisplay::createFont()
 {
+    /*
 	if( !pFont ) {
 		HRESULT hr = D3DXCreateFont(
 			pDevice,
@@ -634,15 +642,18 @@ void Direct3DDisplay::createFont()
 			DXTRACE_ERR_MSGBOX( _T("createFont failed"), hr );
 		}
 	}
+    */
 }
 
 
 void Direct3DDisplay::destroyFont()
 {
+    /*
 	if( pFont ) {
 		pFont->Release();
 		pFont = NULL;
 	}
+    */
 }
 
 
@@ -865,7 +876,7 @@ void Direct3DDisplay::calculateDestRect()
 }
 
 
-void Direct3DDisplay::setOption( const char *option, int value )
+void Direct3DDisplay::setOption(LPCTSTR option, int value)
 {
 	if( !_tcscmp( option, _T("vsync") ) ) {
 		// value of theApp.vsync has already been changed by the menu handler
@@ -929,10 +940,12 @@ bool Direct3DDisplay::resetDevice()
 	if( !pDevice ) return false;
 
 	HRESULT hr;
+    /*
 	if( pFont ) {
 		// prepares font for reset
 		pFont->OnLostDevice();
 	}
+    */
 	destroyTexture();
 	prepareDisplayMode();
 
@@ -942,10 +955,12 @@ bool Direct3DDisplay::resetDevice()
 		return false;
 	}
 
+    /*
 	if( pFont ) {
 		// re-aquires font resources
 		pFont->OnResetDevice();
 	}
+    */
 	createTexture( 0, 0 );
 	setOption( _T("d3dFilter"), theApp.d3dFilter );
 	setOption( _T("motionBlur"), theApp.d3dMotionBlur );

@@ -86,25 +86,24 @@ LONG_PTR defvalues[JOYPADS * KEYS_PER_PAD + MOTION_KEYS] =
 };
 
 
-void winReadKey(const char *name, KeyList& Keys)
+void winReadKey(const TCHAR *name, KeyList& Keys)
 {
-  CString TxtKeyList = regQueryStringValue(name, "");
+  CString TxtKeyList = regQueryStringValue(name, _T(""));
   int curPos= 0;
 
-  CString resToken=TxtKeyList.Tokenize(",",curPos);
+  CString resToken=TxtKeyList.Tokenize(_T(","),curPos);
   while (resToken != "")
   {
-	  Keys.AddTail(atoi(resToken));
-	  resToken= TxtKeyList.Tokenize(",",curPos);
+      Keys.AddTail(_tstoi(resToken));
+	  resToken= TxtKeyList.Tokenize(_T(","),curPos);
   };
 }
 
-void winReadKey(const char *name, int num, KeyList& Keys)
-{
-  char buffer[80];
+void winReadKey(const TCHAR *name, int num, KeyList& Keys) {
+    TCHAR buffer[80];
 
-  sprintf(buffer, "Joy%d_%s", num, name);
-  winReadKey(buffer, Keys);
+    _stprintf(buffer, _T("Joy%d_%s"), num, name);
+    winReadKey(buffer, Keys);
 }
 
 
@@ -112,27 +111,27 @@ void winReadKeys()
 {
 
   for(int i = 0; i < JOYPADS; i++) {
-    winReadKey("Left", i, theApp.input->joypaddata[JOYPAD(i,KEY_LEFT)]);
-    winReadKey("Right", i, theApp.input->joypaddata[JOYPAD(i, KEY_RIGHT)]);
-    winReadKey("Up", i, theApp.input->joypaddata[JOYPAD(i,KEY_UP)]);
-    winReadKey("Down", i, theApp.input->joypaddata[JOYPAD(i,KEY_DOWN)]);
-    winReadKey("A", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_A)]);
-    winReadKey("B", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_B)]);
-    winReadKey("L", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_L)]);
-    winReadKey("R", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_R)]);
-    winReadKey("Start", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_START)]);
-    winReadKey("Select", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SELECT)]);
-    winReadKey("Speed", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SPEED)]);
-    winReadKey("Capture", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_CAPTURE)]);
-    winReadKey("GS", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_GS)]);
+    winReadKey(_T("Left"), i, theApp.input->joypaddata[JOYPAD(i,KEY_LEFT)]);
+    winReadKey(_T("Right"), i, theApp.input->joypaddata[JOYPAD(i, KEY_RIGHT)]);
+    winReadKey(_T("Up"), i, theApp.input->joypaddata[JOYPAD(i,KEY_UP)]);
+    winReadKey(_T("Down"), i, theApp.input->joypaddata[JOYPAD(i,KEY_DOWN)]);
+    winReadKey(_T("A"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_A)]);
+    winReadKey(_T("B"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_B)]);
+    winReadKey(_T("L"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_L)]);
+    winReadKey(_T("R"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_R)]);
+    winReadKey(_T("Start"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_START)]);
+    winReadKey(_T("Select"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SELECT)]);
+    winReadKey(_T("Speed"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SPEED)]);
+    winReadKey(_T("Capture"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_CAPTURE)]);
+    winReadKey(_T("GS"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_GS)]);
   }
-  winReadKey("Motion_Left", theApp.input->joypaddata[MOTION(KEY_LEFT)]);
-  winReadKey("Motion_Right", theApp.input->joypaddata[MOTION(KEY_RIGHT)]);
-  winReadKey("Motion_Up", theApp.input->joypaddata[MOTION(KEY_UP)]);
-  winReadKey("Motion_Down", theApp.input->joypaddata[MOTION(KEY_DOWN)]);
+  winReadKey(_T("Motion_Left"), theApp.input->joypaddata[MOTION(KEY_LEFT)]);
+  winReadKey(_T("Motion_Right"), theApp.input->joypaddata[MOTION(KEY_RIGHT)]);
+  winReadKey(_T("Motion_Up"), theApp.input->joypaddata[MOTION(KEY_UP)]);
+  winReadKey(_T("Motion_Down"), theApp.input->joypaddata[MOTION(KEY_DOWN)]);
 }
 
-void winSaveKey(char *name, KeyList& value)
+void winSaveKey(TCHAR *name, KeyList& value)
 {
 	CString txtKeys;
 
@@ -140,7 +139,7 @@ void winSaveKey(char *name, KeyList& value)
 	while(p!=NULL)
 	{
 		CString tmp;
-		tmp.Format("%d", value.GetNext(p));
+		tmp.Format(_T("%d"), value.GetNext(p));
 		txtKeys+=tmp;
 		if (p!=NULL)
 			txtKeys+=",";
@@ -148,40 +147,39 @@ void winSaveKey(char *name, KeyList& value)
 	regSetStringValue(name, txtKeys);
 }
 
-static void winSaveKey(char *name, int num, KeyList& value)
-{
-  char buffer[80];
+static void winSaveKey(TCHAR *name, int num, KeyList& value) {
+    TCHAR buffer[80];
 
-  sprintf(buffer, "Joy%d_%s", num, name);
-  winSaveKey(buffer, value);
+    _stprintf(buffer, _T("Joy%d_%s"), num, name);
+    winSaveKey(buffer, value);
 }
 
 void winSaveKeys()
 {
   for(int i = 0; i < JOYPADS; i++) {
-    winSaveKey("Left", i, theApp.input->joypaddata[JOYPAD(i,KEY_LEFT)]);
-    winSaveKey("Right", i, theApp.input->joypaddata[JOYPAD(i,KEY_RIGHT)]);
-    winSaveKey("Up", i, theApp.input->joypaddata[JOYPAD(i,KEY_UP)]);
-    winSaveKey("Speed", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SPEED)]);
-    winSaveKey("Capture", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_CAPTURE)]);
-    winSaveKey("GS", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_GS)]);
-    winSaveKey("Down", i, theApp.input->joypaddata[JOYPAD(i,KEY_DOWN)]);
-    winSaveKey("A", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_A)]);
-    winSaveKey("B", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_B)]);
-    winSaveKey("L", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_L)]);
-    winSaveKey("R", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_R)]);
-    winSaveKey("Start", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_START)]);
-    winSaveKey("Select", i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SELECT)]);
+    winSaveKey(_T("Left"), i, theApp.input->joypaddata[JOYPAD(i,KEY_LEFT)]);
+    winSaveKey(_T("Right"), i, theApp.input->joypaddata[JOYPAD(i,KEY_RIGHT)]);
+    winSaveKey(_T("Up"), i, theApp.input->joypaddata[JOYPAD(i,KEY_UP)]);
+    winSaveKey(_T("Speed"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SPEED)]);
+    winSaveKey(_T("Capture"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_CAPTURE)]);
+    winSaveKey(_T("GS"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_GS)]);
+    winSaveKey(_T("Down"), i, theApp.input->joypaddata[JOYPAD(i,KEY_DOWN)]);
+    winSaveKey(_T("A"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_A)]);
+    winSaveKey(_T("B"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_B)]);
+    winSaveKey(_T("L"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_L)]);
+    winSaveKey(_T("R"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_R)]);
+    winSaveKey(_T("Start"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_START)]);
+    winSaveKey(_T("Select"), i, theApp.input->joypaddata[JOYPAD(i,KEY_BUTTON_SELECT)]);
   }
-  regSetDwordValue("joyVersion", 1);
+  regSetDwordValue(_T("joyVersion"), 1);
 
-  winSaveKey("Motion_Left",
+  winSaveKey(_T("Motion_Left"),
                    theApp.input->joypaddata[MOTION(KEY_LEFT)]);
-  winSaveKey("Motion_Right",
+  winSaveKey(_T("Motion_Right"),
                    theApp.input->joypaddata[MOTION(KEY_RIGHT)]);
-  winSaveKey("Motion_Up",
+  winSaveKey(_T("Motion_Up"),
                    theApp.input->joypaddata[MOTION(KEY_UP)]);
-  winSaveKey("Motion_Down",
+  winSaveKey(_T("Motion_Down"),
                    theApp.input->joypaddata[MOTION(KEY_DOWN)]);
 }
 
@@ -710,9 +708,9 @@ CString DirectInput::getKeyName(LONG_PTR key)
 				pDevices[d].axis[k>>1].offset,
 				DIPH_BYOFFSET);
 			if (k & 1)
-				winBuffer.Format("Joy %d %s +", d, di.tszName);
+				winBuffer.Format(_T("Joy %d %s +"), d, di.tszName);
 			else
-				winBuffer.Format("Joy %d %s -", d, di.tszName);
+                winBuffer.Format(_T("Joy %d %s -"), d, di.tszName);
         } else if (k < 48) {
             LONG_PTR hat = (k >> 2) & 3;
             pDevices[d].device->GetObjectInfo(&di,
@@ -726,7 +724,7 @@ CString DirectInput::getKeyName(LONG_PTR key)
                 dir = "right";
             else if (dd == 3)
                 dir = "left";
-            winBuffer.Format("Joy %d %s %s", d, di.tszName, dir);
+            winBuffer.Format(_T("Joy %d %s %s"), d, di.tszName, dir);
         } else {
             pDevices[d].device->GetObjectInfo(&di,
                                               (DWORD)DIJOFS_BUTTON(k-128),
@@ -737,7 +735,7 @@ CString DirectInput::getKeyName(LONG_PTR key)
 	else
 	{
 		// Joystick isn't plugged in.  We can't decipher k, so just show its value.
-		winBuffer.Format("Joy %d (%d)", d, k);
+        winBuffer.Format(_T("Joy %d (%d)"), d, k);
 	}
 
     return winBuffer;

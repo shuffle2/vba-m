@@ -49,7 +49,7 @@ void ZoomControl::registerClass()
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH )GetStockObject(BLACK_BRUSH);
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = "VbaZoomControl";
+    wc.lpszClassName = _T("VbaZoomControl");
     AfxRegisterClass(&wc);
     isRegistered = true;
   }

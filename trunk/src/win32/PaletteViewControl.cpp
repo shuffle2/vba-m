@@ -70,9 +70,9 @@ void PaletteViewControl::init(int c, int w, int h)
 }
 
 
-bool PaletteViewControl::saveAdobe(const char *name)
+bool PaletteViewControl::saveAdobe(LPCTSTR name)
 {
-  FILE *f = fopen(name, "wb");
+  FILE *f = _tfopen(name, _T("wb"));
 
   if(!f)
     return false;
@@ -98,9 +98,9 @@ bool PaletteViewControl::saveAdobe(const char *name)
 }
 
 
-bool PaletteViewControl::saveMSPAL(const char *name)
+bool PaletteViewControl::saveMSPAL(LPCTSTR name)
 {
-  FILE *f = fopen(name, "wb");
+  FILE *f = _tfopen(name, _T("wb"));
 
   if(!f)
     return false;
@@ -141,14 +141,14 @@ bool PaletteViewControl::saveMSPAL(const char *name)
 }
 
 
-bool PaletteViewControl::saveJASCPAL(const char *name)
+bool PaletteViewControl::saveJASCPAL(LPCTSTR name)
 {
-  FILE *f = fopen(name, "wb");
+  FILE *f = _tfopen(name, _T("wb"));
 
   if(!f)
     return false;
 
-  fprintf(f, "JASC-PAL\r\n0100\r\n256\r\n");
+  _ftprintf(f, _T("JASC-PAL\r\n0100\r\n256\r\n"));
 
   for(int i = 0; i < colors; i++) {
     u16 c = palette[i];
@@ -156,11 +156,11 @@ bool PaletteViewControl::saveJASCPAL(const char *name)
     int g = (c & 0x3e0) >> 2;
     int b = (c & 0x7c00) >> 7;
 
-    fprintf(f, "%d %d %d\r\n", r, g, b);
+    _ftprintf(f, _T("%d %d %d\r\n"), r, g, b);
   }
   if(colors < 256) {
     for(int i = colors; i < 256; i++)
-      fprintf(f, "0 0 0\r\n");
+      _ftprintf(f, _T("0 0 0\r\n"));
   }
   fclose(f);
 
@@ -381,7 +381,7 @@ void PaletteViewControl::registerClass()
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH )GetStockObject(BLACK_BRUSH);
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = "VbaPaletteViewControl";
+    wc.lpszClassName = _T("VbaPaletteViewControl");
     AfxRegisterClass(&wc);
     isRegistered = true;
   }

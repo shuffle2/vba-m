@@ -47,23 +47,22 @@ BEGIN_MESSAGE_MAP(GameOverrides, CDialog)
 
 void GameOverrides::OnOK()
 {
-  char tempName[2048];
+  TCHAR tempName[2048];
 
   GetModuleFileName(NULL, tempName, 2048);
 
-  char *p = strrchr(tempName, '\\');
+  TCHAR *p = _tcsrchr(tempName, '\\');
   if(p)
     *p = 0;
 
-  char buffer[5];
-  strncpy(buffer, (const char *)&rom[0xac], 4);
-  buffer[4] = 0;
+  CString bufferA((const char *)&rom[0xac], 4);
+  CString buffer(bufferA);
 
-  strcat(tempName, "\\vba-over.ini");
+  _tcscat(tempName, _T("\\vba-over.ini"));
 
-  char comment[0xFF];
+  TCHAR comment[0xFF];
   m_comment.GetWindowText(comment, 0xFF);
-  WritePrivateProfileString(buffer, "comment", !strncmp(comment, "", 0xFF) ? NULL : comment, tempName);
+  WritePrivateProfileString(buffer, _T("comment"), !_tcsnccmp(comment, _T(""), 0xFF) ? NULL : comment, tempName);
 
   int rtc = m_rtc.GetCurSel();
   int flash = m_flashSize.GetCurSel();
@@ -72,58 +71,58 @@ void GameOverrides::OnOK()
   if(rtc == 0 && flash == 0 && save == 0 && mirroring == 0)
     WritePrivateProfileString(buffer, NULL, NULL, tempName);
   else {
-    char *value = NULL;
+    TCHAR *value = NULL;
     switch(rtc) {
     case 1:
-      value = "0";
+        value = _T("0");
       break;
     case 2:
-      value = "1";
+        value = _T("1");
       break;
     }
-    WritePrivateProfileString(buffer, "rtcEnabled", value, tempName);
+    WritePrivateProfileString(buffer, _T("rtcEnabled"), value, tempName);
     value = NULL;
     switch(flash) {
     case 1:
-      value = "0x10000";
+        value = _T("0x10000");
       break;
     case 2:
-      value = "0x20000";
+        value = _T("0x20000");
       break;
     }
-    WritePrivateProfileString(buffer, "flashSize", value, tempName);
+    WritePrivateProfileString(buffer, _T("flashSize"), value, tempName);
     value = NULL;
     switch(save) {
     case 1:
-      value = "0";
+        value = _T("0");
       break;
     case 2:
-      value = "1";
+        value = _T("1");
       break;
     case 3:
-      value = "2";
+        value = _T("2");
       break;
     case 4:
-      value = "3";
+        value = _T("3");
       break;
     case 5:
-      value = "4";
+        value = _T("4");
       break;
     case 6:
-      value = "5";
+        value = _T("5");
       break;
     }
-    WritePrivateProfileString(buffer, "saveType", value, tempName);
+    WritePrivateProfileString(buffer, _T("saveType"), value, tempName);
     value = NULL;
     switch(mirroring) {
     case 1:
-      value = "0";
+        value = _T("0");
       break;
     case 2:
-      value = "1";
+        value = _T("1");
       break;
     }
-    WritePrivateProfileString(buffer, "mirroringEnabled", value, tempName);
+    WritePrivateProfileString(buffer, _T("mirroringEnabled"), value, tempName);
   }
   CDialog::OnOK();
 }
@@ -145,31 +144,31 @@ BOOL GameOverrides::OnInitDialog()
 {
   CDialog::OnInitDialog();
 
-  char tempName[2048];
+  TCHAR tempName[2048];
 
-  const char *rtcValues[] = {
-    "Default",
-    "Disabled",
-    "Enabled"
+  const TCHAR *rtcValues[] = {
+    _T("Default"),
+    _T("Disabled"),
+    _T("Enabled")
   };
-  const char *flashValues[] = {
-    "Default",
-    "64K",
-    "128K"
+  const TCHAR *flashValues[] = {
+    _T("Default"),
+    _T("64K"),
+    _T("128K")
   };
-  const char *saveValues[] = {
-    "Default",
-    "Automatic",
-    "EEPROM",
-    "SRAM",
-    "Flash",
-    "EEPROM+Sensor",
-    "None"
+  const TCHAR *saveValues[] = {
+    _T("Default"),
+    _T("Automatic"),
+    _T("EEPROM"),
+    _T("SRAM"),
+    _T("Flash"),
+    _T("EEPROM+Sensor"),
+    _T("None")
   };
-  const char *mirroringValues[] = {
-    "Default",
-    "Disabled",
-    "Enabled"
+  const TCHAR *mirroringValues[] = {
+    _T("Default"),
+    _T("Disabled"),
+    _T("Enabled")
   };
 
   int i;
@@ -189,29 +188,28 @@ BOOL GameOverrides::OnInitDialog()
 
   GetModuleFileName(NULL, tempName, 2048);
 
-  char *p = strrchr(tempName, '\\');
+  TCHAR *p = _tcsrchr(tempName, '\\');
   if(p)
     *p = 0;
 
-  char buffer[5];
-  strncpy(buffer, (const char *)&rom[0xac], 4);
-  buffer[4] = 0;
+  CString bufferA((const char *)&rom[0xac], 4);
+  CString buffer(bufferA);
 
-  strcat(tempName, "\\vba-over.ini");
+  _tcscat(tempName, _T("\\vba-over.ini"));
 
   m_name.SetWindowText(buffer);
 
-  char comment[0xFF];
+  TCHAR comment[0xFF];
   GetPrivateProfileString(buffer,
-	  "comment",
-	  "",
+	  _T("comment"),
+	  _T(""),
 	  comment,
 	  0xFF,
 	  tempName);
   m_comment.SetWindowText(comment);
 
   UINT v = GetPrivateProfileInt(buffer,
-                                "rtcEnabled",
+                                _T("rtcEnabled"),
                                 -1,
                                 tempName);
   switch(v) {
@@ -225,7 +223,7 @@ BOOL GameOverrides::OnInitDialog()
     m_rtc.SetCurSel(0);
   }
   v = GetPrivateProfileInt(buffer,
-                           "flashSize",
+                           _T("flashSize"),
                            -1,
                            tempName);
   switch(v) {
@@ -240,7 +238,7 @@ BOOL GameOverrides::OnInitDialog()
   }
 
   v = GetPrivateProfileInt(buffer,
-                           "saveType",
+                           _T("saveType"),
                            -1,
                            tempName);
   if(v != (UINT)-1 && (v > 5))
@@ -251,7 +249,7 @@ BOOL GameOverrides::OnInitDialog()
     m_saveType.SetCurSel(0);
 
   v = GetPrivateProfileInt(buffer,
-                           "mirroringEnabled",
+                           _T("mirroringEnabled"),
                             -1,
                             tempName);
   switch(v) {

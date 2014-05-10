@@ -66,7 +66,7 @@ class VBA : public CWinApp
   void (*ifbFunction)(u8*,u32,int,int);
   int ifbType;
   int filterType;
-  char pluginName[MAX_PATH];
+  TCHAR pluginName[MAX_PATH];
   int filterWidth;
   int filterHeight;
   int filterMagnification;
@@ -230,7 +230,7 @@ class VBA : public CWinApp
   void saveSettings();
   void movieReadNext();
   bool initInput();
-  HMODULE winLoadLanguage(const char *name);
+  HMODULE winLoadLanguage(LPCTSTR name);
   void winSetLanguageOption(int option, bool force);
 #ifdef MMX
   bool detectMMX();

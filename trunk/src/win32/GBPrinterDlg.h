@@ -20,8 +20,8 @@ class GBPrinterDlg : public CDialog
   // Construction
  public:
   void processData(u8 *data);
-  void saveAsPNG(const char *name);
-  void saveAsBMP(const char *name);
+  void saveAsPNG(LPCTSTR name);
+  void saveAsBMP(LPCTSTR name);
   GBPrinterDlg(CWnd* pParent = NULL);   // standard constructor
   ~GBPrinterDlg();
 

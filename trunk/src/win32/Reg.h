@@ -3,16 +3,16 @@
 
 extern bool regEnabled;
 
-char *regQueryStringValue(const char *key, char *def);
-DWORD regQueryDwordValue(const char *key, DWORD def, bool force=false);
-BOOL regQueryBinaryValue(const char *key, char *value, int count);
-void regSetStringValue(const char *key,const char *value);
-void regSetDwordValue(const char *key,DWORD value,bool force=false);
-void regSetBinaryValue(const char *key, char *value, int count);
-void regDeleteValue(char *key);
-void regInit(const char *, bool force = false);
+TCHAR *regQueryStringValue(const TCHAR *key, TCHAR *def);
+DWORD regQueryDwordValue(const TCHAR *key, DWORD def, bool force=false);
+BOOL regQueryBinaryValue(const TCHAR *key, void *value, int count);
+void regSetStringValue(const TCHAR *key,const TCHAR *value);
+void regSetDwordValue(const TCHAR *key,DWORD value,bool force=false);
+void regSetBinaryValue(const TCHAR *key, void *value, int count);
+void regDeleteValue(TCHAR *key);
+void regInit(const TCHAR *, bool force = false);
 void regShutdown();
-bool regCreateFileType( const char *ext, const char *type );
-bool regAssociateType( const char *type, const char *desc, const char *application, const char *icon = NULL );
+bool regCreateFileType( const TCHAR *ext, const TCHAR *type );
+bool regAssociateType( const TCHAR *type, const TCHAR *desc, const TCHAR *application, const TCHAR *icon = NULL );
 void regExportSettingsToINI();
 #endif // VBA_REG_H

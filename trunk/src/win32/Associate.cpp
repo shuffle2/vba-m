@@ -92,19 +92,22 @@ void Associate::OnOk()
   if(m_bin)
     mask |= 128;
   if(mask) {
-    char applicationPath[2048];
+    TCHAR applicationPath[2048];
     CString commandPath;
-    LPCTSTR types[] = { "*.dmg", ".gb", ".sgb", ".cgb", ".gbc", ".gba", ".agb", ".bin" };
+    TCHAR *types[] = {
+        _T("*.dmg"), _T(".gb"), _T(".sgb"), _T(".cgb"),
+        _T(".gbc"), _T(".gba"), _T(".agb"), _T(".bin")
+    };
     GetModuleFileName(NULL, applicationPath, 2048);
-    commandPath.Format("\"%s\" \"%%1\"", applicationPath);
-    regAssociateType("VisualBoyAdvance.Binary",
-                     "Binary",
+    commandPath.Format(_T("\"%s\" \"%%1\""), applicationPath);
+    regAssociateType(_T("VisualBoyAdvance.Binary"),
+                     _T("Binary"),
                      commandPath,
-					 "%SystemRoot%\\system32\\SHELL32.dll,-13");
+					 _T("%SystemRoot%\\system32\\SHELL32.dll,-13"));
 
     for(int i = 0; i < 8; i++) {
       if(mask & (1<<i)) {
-        regCreateFileType(types[i],"VisualBoyAdvance.Binary");
+        regCreateFileType(types[i], _T("VisualBoyAdvance.Binary"));
       }
     }
   }

@@ -35,8 +35,8 @@ class GBOamView : public ResizeDlg, IUpdateListener
  public:
   void updateScrollInfo();
   void save();
-  void savePNG(const char *name);
-  void saveBMP(const char *name);
+  void savePNG(LPCTSTR name);
+  void saveBMP(LPCTSTR name);
   void render();
   void setAttributes(int y, int x, int tile, int flags);
   void paint();

@@ -495,7 +495,7 @@ void CAcceleratorManager::UpdateMenu(HMENU menu)
 
   if(info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
     MENUITEMINFO info;
-    char ss[128];
+    TCHAR ss[128];
     ZeroMemory(&info, sizeof(info));
     info.cbSize = sizeof(info) - sizeof(HBITMAP);
     info.fMask = MIIM_ID | MIIM_SUBMENU;
@@ -582,7 +582,7 @@ void CAcceleratorManager::UpdateMenu(HMENU menu)
               temp[1] = 0;
               wcscat(str, temp);
               p = temp;
-              for(const char *sp = s; *sp; sp++)
+              for(LPCTSTR sp = s; *sp; sp++)
                 *p++ = *sp;
               *p = 0;
               wcscat(str, temp);
@@ -611,7 +611,7 @@ bool CAcceleratorManager::Load(HKEY hRegKey, LPCTSTR szRegKey)
   DWORD data[2048/sizeof(DWORD)];
 
   DWORD len = sizeof(data);
-  if(regQueryBinaryValue("keyboard", (char *)data, len)) {
+  if(regQueryBinaryValue(_T("keyboard"), (char *)data, len)) {
     int count = len/sizeof(DWORD);
 
     CCmdAccelOb* pCmdAccel;
@@ -715,7 +715,7 @@ bool CAcceleratorManager::Write()
   for(int index = 0; index < count; index++)
     data[index] = AccelsDatasArray[index];
 
-  regSetBinaryValue("keyboard", (char *)data, (int)(count*sizeof(DWORD)));
+  regSetBinaryValue(_T("keyboard"), (char *)data, (int)(count*sizeof(DWORD)));
 
   AccelsDatasArray.RemoveAll();
   CmdDatasArray.RemoveAll();

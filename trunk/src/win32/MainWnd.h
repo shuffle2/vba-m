@@ -20,16 +20,16 @@ public:
 	bool fileOpenSelect( int system );
 	void updateSoundChannels(UINT nID);
 	bool fileImportGSACodeFile(CString& fileName);
-	bool writeSaveGame(const char *name);
-	bool loadSaveGame(const char *name);
+    bool writeSaveGame(LPCTSTR name);
+    bool loadSaveGame(LPCTSTR name);
 	CString winLoadFilter(UINT id);
-	void winLoadCheatList(const char *name);
+    void winLoadCheatList(LPCTSTR name);
 	void winLoadCheatListDefault();
 	void readBatteryFile();
 	void writeBatteryFile();
 	bool isDriveRoot(CString& file);
 	CString getDirFromFile(CString& file);
-	void winSaveCheatList(const char *name);
+    void winSaveCheatList(LPCTSTR name);
 	void winSaveCheatListDefault();
 
 private:

@@ -37,10 +37,10 @@ void OALConfig::DoDataExchange(CDataExchange* pDX)
 		// enumerate devices
 		const ALchar *devices = NULL;
 		devices = ALFunction.alcGetString( NULL, ALC_DEVICE_SPECIFIER );
-		if( strlen( devices ) ) {
+		if( _tcslen( devices ) ) {
 			while( *devices ) {
 				m_cbDevice.AddString( devices );
-				devices += strlen( devices ) + 1;
+				devices += _tcslen( devices ) + 1;
 			}
 		} else {
 			systemMessage( IDS_OAL_NODEVICE, "There are no sound devices present on this system." );

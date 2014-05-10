@@ -79,7 +79,7 @@ public:
 	virtual void render();
 	virtual bool changeRenderSize( int w, int h );
 	virtual void resize( int w, int h );
-	virtual void setOption( const char *, int );
+	virtual void setOption(LPCTSTR, int );
 	virtual bool selectFullScreenMode( VIDEO_MODE &mode );
 };
 
@@ -421,18 +421,18 @@ void OpenGLDisplay::render()
 
 
 	if( theApp.showSpeed ) { // && ( theApp.videoOption > VIDEO_6X ) ) {
-		char buffer[30];
+		TCHAR buffer[30];
 		if( theApp.showSpeed == 1 ) {
-			sprintf( buffer, "%3d%%", systemSpeed );
+            _stprintf(buffer, _T("%3d%%"), systemSpeed);
 		} else {
-			sprintf( buffer, "%3d%%(%d, %d fps)", systemSpeed, systemFrameSkip, theApp.showRenderedFrames );
+            _stprintf(buffer, _T("%3d%%(%d, %d fps)"), systemSpeed, systemFrameSkip, theApp.showRenderedFrames);
 		}
 		glFontBegin(&font);
 		glPushMatrix();
 		float fontscale = (float)theApp.surfaceSizeX / 100.0f;
 		glScalef(fontscale, fontscale, fontscale);
 		glColor4f(1.0f, 0.25f, 0.25f, 1.0f);
-		glFontTextOut(buffer, (theApp.surfaceSizeX-(strlen(buffer)*11))/(fontscale*2), (theApp.surfaceSizeY-20)/fontscale, 0);
+		glFontTextOut(buffer, (theApp.surfaceSizeX-(_tcslen(buffer)*11))/(fontscale*2), (theApp.surfaceSizeY-20)/fontscale, 0);
 		glPopMatrix();
 		glFontEnd();
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -446,7 +446,10 @@ void OpenGLDisplay::render()
 			float fontscale = (float)theApp.surfaceSizeX / 100.0f;
 			glScalef(fontscale, fontscale, fontscale);
 			glColor4f(1.0f, 0.25f, 0.25f, 1.0f);
-			glFontTextOut((char *)((const char *)theApp.screenMessageBuffer), (theApp.surfaceSizeX-(theApp.screenMessageBuffer.GetLength()*11))/(fontscale*2), (theApp.surfaceSizeY-40)/fontscale, 0);
+			glFontTextOut(theApp.screenMessageBuffer,
+                          (theApp.surfaceSizeX - (theApp.screenMessageBuffer.GetLength() * 11)) / (fontscale * 2),
+                          (theApp.surfaceSizeY - 40) / fontscale,
+                          0);
 			glPopMatrix();
 			glFontEnd();
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -630,21 +633,21 @@ void OpenGLDisplay::calculateDestRect( int w, int h )
 }
 
 //config options
-void OpenGLDisplay::setOption( const char *option, int value )
+void OpenGLDisplay::setOption(LPCTSTR option, int value)
 {
-	if( !_tcscmp( option, _T("vsync") ) ) {
+	if( !_tcscmp( option, _T("vsync")) ) {
 		setVSync( value );
 	}
 
-	if( !_tcscmp( option, _T("glFilter") ) ) {
+    if (!_tcscmp(option, _T("glFilter"))) {
 		updateFiltering( value );
 	}
 
-	if( !_tcscmp( option, _T("maxScale") ) ) {
+    if (!_tcscmp(option, _T("maxScale"))) {
 		initializeMatrices( theApp.dest.right-theApp.dest.left, theApp.dest.bottom-theApp.dest.top );
 	}
 
-	if( !_tcscmp( option, _T("fullScreenStretch") ) ) {
+    if (!_tcscmp(option, _T("fullScreenStretch"))) {
 		initializeMatrices( theApp.dest.right-theApp.dest.left, theApp.dest.bottom-theApp.dest.top );
 	}
 }

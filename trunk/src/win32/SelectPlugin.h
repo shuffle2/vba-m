@@ -11,7 +11,7 @@
 // SelectPlugin dialog
 struct PluginDesc
 {
-	char sFile[MAX_PATH];
+	TCHAR sFile[MAX_PATH];
 	char sDesc[60];
 };
 
@@ -21,7 +21,7 @@ class SelectPlugin : public CDialog
 public:
 	SelectPlugin(CWnd* pParent = NULL);   // standard constructor
 	size_t EnumPlugins();
-	bool GetPluginDesc(const char *sRpi, PluginDesc *pDesc);
+	bool GetPluginDesc(TCHAR *sRpi, PluginDesc *pDesc);
 
 // Dialog Data
 	//{{AFX_DATA(SelectPlugin)

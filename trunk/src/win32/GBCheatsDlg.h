@@ -13,9 +13,9 @@
 struct WinGbCheatsData {
   int  bank;
   u16  addr;
-  char address[9];
-  char oldValue[12];
-  char newValue[12];
+  TCHAR address[9];
+  TCHAR oldValue[12];
+  TCHAR newValue[12];
 };
 
 class GBCheatSearch : public CDialog

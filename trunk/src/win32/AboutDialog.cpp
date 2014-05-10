@@ -15,8 +15,8 @@ static char THIS_FILE[] = __FILE__;
 AboutDialog::AboutDialog(CWnd* pParent /*=NULL*/)
   : CDialog(AboutDialog::IDD, pParent)
 {
-	m_version = _T(VBA_VERSION_STRING);
-	m_date = _T(__DATE__);
+	m_version = CString(VBA_VERSION_STRING);
+	m_date = CString(__DATE__);
 }
 
 
@@ -48,7 +48,7 @@ BOOL AboutDialog::OnInitDialog()
     m_translator.SubclassDlgItem(IDC_TRANSLATOR_URL, this);
   }
 
-  m_link.SetWindowText("http://vba-m.com");
+  m_link.SetWindowText(_T("http://vba-m.com"));
 
   return TRUE;  // return TRUE unless you set the focus to a control
   // EXCEPTION: OCX Property Pages should return FALSE

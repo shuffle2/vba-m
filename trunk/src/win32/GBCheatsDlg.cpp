@@ -123,13 +123,13 @@ void GBCheatSearch::OnSearch()
     int value = 0;
     switch(numberType) {
     case 0:
-      sscanf(buffer, "%d", &value);
+      _stscanf(buffer, _T("%d"), &value);
       break;
     case 1:
-      sscanf(buffer, "%u", &value);
+      _stscanf(buffer, _T("%u"), &value);
       break;
     default:
-      sscanf(buffer, "%x", &value);
+      _stscanf(buffer, _T("%x"), &value);
     }
     cheatSearchValue(&cheatSearchData,
                      searchType,
@@ -200,7 +200,7 @@ void GBCheatSearch::OnUpdate()
     updateValues = true;
   else
     updateValues = false;
-  regSetDwordValue("gbCheatsUpdate", updateValues);
+  regSetDwordValue(_T("gbCheatsUpdate"), updateValues);
 }
 
 BOOL GBCheatSearch::OnInitDialog()
@@ -227,24 +227,24 @@ BOOL GBCheatSearch::OnInitDialog()
     GetDlgItem(IDC_ADD_CHEAT)->EnableWindow(FALSE);
   }
 
-  valueType = regQueryDwordValue("gbCheatsValueType", 0);
+  valueType = regQueryDwordValue(_T("gbCheatsValueType"), 0);
   if(valueType < 0 || valueType > 1)
     valueType = 2;
 
-  searchType = regQueryDwordValue("gbCheatsSearchType",
+  searchType = regQueryDwordValue(_T("gbCheatsSearchType"),
                                   SEARCH_EQ);
   if(searchType < 0 || searchType > 5)
     searchType = 0;
 
-  numberType = regQueryDwordValue("gbCheatsNumberType", 2);
+  numberType = regQueryDwordValue(_T("gbCheatsNumberType"), 2);
   if(numberType < 0 || numberType > 2)
     numberType = 2;
 
-  sizeType = regQueryDwordValue("gbCheatsSizeType", 0);
+  sizeType = regQueryDwordValue(_T("gbCheatsSizeType"), 0);
   if(sizeType < 0 || sizeType > 2)
     sizeType = 0;
 
-  updateValues = regQueryDwordValue("gbCheatsUpdate", 0) ?
+  updateValues = regQueryDwordValue(_T("gbCheatsUpdate"), 0) ?
     true : false;
 
   UpdateData(FALSE);
@@ -272,13 +272,13 @@ void GBCheatSearch::OnGetdispinfoCheatList(NMHDR* pNMHDR, LRESULT* pResult)
 
     switch(col) {
     case 0:
-      strcpy(info->item.pszText, data[index].address);
+      _tcscpy(info->item.pszText, data[index].address);
       break;
     case 1:
-      strcpy(info->item.pszText, data[index].oldValue);
+      _tcscpy(info->item.pszText, data[index].oldValue);
       break;
     case 2:
-      strcpy(info->item.pszText, data[index].newValue);
+      _tcscpy(info->item.pszText, data[index].newValue);
       break;
     }
   }
@@ -312,29 +312,29 @@ void GBCheatSearch::addChange(int index, int bank, u16 address, int offset, u32 
   } else
     address |= offset;
   data[index].addr = address;
-  sprintf(data[index].address, "%02x:%04x",bank,address);
+  _stprintf(data[index].address, _T("%02x:%04x"),bank,address);
   switch(numberType) {
   case 0:
-    sprintf(data[index].oldValue, "%d", oldValue);
-    sprintf(data[index].newValue, "%d", newValue);
+    _stprintf(data[index].oldValue, _T("%d"), oldValue);
+    _stprintf(data[index].newValue, _T("%d"), newValue);
     break;
   case 1:
-    sprintf(data[index].oldValue, "%u", oldValue);
-    sprintf(data[index].newValue, "%u", newValue);
+    _stprintf(data[index].oldValue, _T("%u"), oldValue);
+    _stprintf(data[index].newValue, _T("%u"), newValue);
     break;
   case 2:
     switch(sizeType) {
     case 0:
-      sprintf(data[index].oldValue, "%02x", oldValue);
-      sprintf(data[index].newValue, "%02x", newValue);
+      _stprintf(data[index].oldValue, _T("%02x"), oldValue);
+      _stprintf(data[index].newValue, _T("%02x"), newValue);
       break;
     case 1:
-      sprintf(data[index].oldValue, "%04x", oldValue);
-      sprintf(data[index].newValue, "%04x", newValue);
+      _stprintf(data[index].oldValue, _T("%04x"), oldValue);
+      _stprintf(data[index].newValue, _T("%04x"), newValue);
       break;
     case 2:
-      sprintf(data[index].oldValue, "%08x", oldValue);
-      sprintf(data[index].newValue, "%08x", newValue);
+      _stprintf(data[index].oldValue, _T("%08x"), oldValue);
+      _stprintf(data[index].newValue, _T("%08x"), newValue);
       break;
     }
   }
@@ -442,12 +442,12 @@ void GBCheatSearch::OnValueType(UINT id)
   case IDC_OLD_VALUE:
     valueType = 0;
     m_value.EnableWindow(FALSE);
-    regSetDwordValue("gbCheatsValueType", 0);
+    regSetDwordValue(_T("gbCheatsValueType"), 0);
     break;
   case IDC_SPECIFIC_VALUE:
     valueType = 1;
     m_value.EnableWindow(TRUE);
-    regSetDwordValue("gbCheatsValueType", 1);
+    regSetDwordValue(_T("gbCheatsValueType"), 1);
     break;
   }
 }
@@ -457,27 +457,27 @@ void GBCheatSearch::OnSearchType(UINT id)
   switch(id) {
   case IDC_EQ:
     searchType = SEARCH_EQ;
-    regSetDwordValue("gbCheatsSearchType", 0);
+    regSetDwordValue(_T("gbCheatsSearchType"), 0);
     break;
   case IDC_NE:
     searchType = SEARCH_NE;
-    regSetDwordValue("gbCheatsSearchType", 1);
+    regSetDwordValue(_T("gbCheatsSearchType"), 1);
     break;
   case IDC_LT:
     searchType = SEARCH_LT;
-    regSetDwordValue("gbCheatsSearchType", 2);
+    regSetDwordValue(_T("gbCheatsSearchType"), 2);
     break;
   case IDC_LE:
     searchType = SEARCH_LE;
-    regSetDwordValue("gbCheatsSearchType", 3);
+    regSetDwordValue(_T("gbCheatsSearchType"), 3);
     break;
   case IDC_GT:
     searchType = SEARCH_GT;
-    regSetDwordValue("gbCheatsSearchType", 4);
+    regSetDwordValue(_T("gbCheatsSearchType"), 4);
     break;
   case IDC_GE:
     searchType = SEARCH_GE;
-    regSetDwordValue("gbCheatsSearchType", 5);
+    regSetDwordValue(_T("gbCheatsSearchType"), 5);
     break;
   }
 }
@@ -487,21 +487,21 @@ void GBCheatSearch::OnNumberType(UINT id)
   switch(id) {
   case IDC_SIGNED:
     numberType = 0;
-    regSetDwordValue("gbCheatsNumberType", 0);
+    regSetDwordValue(_T("gbCheatsNumberType"), 0);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
     break;
   case IDC_UNSIGNED:
     numberType = 1;
-    regSetDwordValue("gbCheatsNumberType", 1);
+    regSetDwordValue(_T("gbCheatsNumberType"), 1);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
     break;
   case IDC_HEXADECIMAL:
     numberType = 2;
-    regSetDwordValue("gbCheatsNumberType", 2);
+    regSetDwordValue(_T("gbCheatsNumberType"), 2);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
@@ -514,21 +514,21 @@ void GBCheatSearch::OnSizeType(UINT id)
   switch(id) {
   case IDC_SIZE_8:
     sizeType = BITS_8;
-    regSetDwordValue("gbCheatsSizeType", 0);
+    regSetDwordValue(_T("gbCheatsSizeType"), 0);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
     break;
   case IDC_SIZE_16:
     sizeType = BITS_16;
-    regSetDwordValue("gbCheatsSizeType", 1);
+    regSetDwordValue(_T("gbCheatsSizeType"), 1);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
     break;
   case IDC_SIZE_32:
     sizeType = BITS_32;
-    regSetDwordValue("gbCheatsSizeType", 2);
+    regSetDwordValue(_T("gbCheatsSizeType"), 2);
     if(m_list.GetItemCount()) {
       addChanges(false);
     }
@@ -603,13 +603,13 @@ bool AddGBCheat::addCheat()
 
   switch(numberType) {
   case 0:
-    sscanf(buffer, "%d", &value);
+    _stscanf(buffer, _T("%d"), &value);
     break;
   case 1:
-    sscanf(buffer, "%u", &value);
+    _stscanf(buffer, _T("%u"), &value);
     break;
   default:
-    sscanf(buffer, "%x", &value);
+    _stscanf(buffer, _T("%x"), &value);
   }
 
   m_desc.GetWindowText(buffer);
@@ -624,34 +624,34 @@ bool AddGBCheat::addCheat()
 
   switch(sizeType) {
   case 0:
-    code.Format("%02X%02X%02X%02X", bank, value, address&0xFF, address>>8);
-    gbAddGsCheat(code, buffer);
+    code.Format(_T("%02X%02X%02X%02X"), bank, value, address&0xFF, address>>8);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     break;
   case 1:
-    code.Format("%02X%02X%02X%02X", bank, value&0xFF, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, value&0xFF, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     address++;
-    code.Format("%02X%02X%02X%02X", bank, value>>8, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, value>>8, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     break;
   case 2:
-    code.Format("%02X%02X%02X%02X", bank, value&0xFF, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, value&0xFF, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     address++;
-    code.Format("%02X%02X%02X%02X", bank, (value>>8) & 0xFF, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, (value>>8) & 0xFF, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     address++;
-    code.Format("%02X%02X%02X%02X", bank, (value>>16)&0xFF, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, (value>>16)&0xFF, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     address++;
-    code.Format("%02X%02X%02X%02X", bank, value>>24, address&0xFF,
+    code.Format(_T("%02X%02X%02X%02X"), bank, value>>24, address&0xFF,
                 address>>8);
-    gbAddGsCheat(code, buffer);
+    gbAddGsCheat(CStringA(code), CStringA(buffer));
     break;
   }
 
@@ -663,16 +663,16 @@ BOOL AddGBCheat::OnInitDialog()
   CDialog::OnInitDialog();
 
   CString buffer;
-  buffer.Format("%02x:%08x", (address>>16), address&0xFFFF);
+  buffer.Format(_T("%02x:%08x"), (address>>16), address&0xFFFF);
   m_address.SetWindowText(buffer);
   m_address.EnableWindow(FALSE);
   ::SetWindowLongPtr( m_address.GetSafeHwnd(), GWLP_USERDATA, address);
 
-  numberType = regQueryDwordValue("gbCheatsNumberType", 2);
+  numberType = regQueryDwordValue(_T("gbCheatsNumberType"), 2);
   if(numberType < 0 || numberType > 2)
     numberType = 2;
 
-  sizeType = regQueryDwordValue("gbCheatsSizeType", 0);
+  sizeType = regQueryDwordValue(_T("gbCheatsSizeType"), 0);
   if(sizeType < 0 || sizeType > 2)
     sizeType = 0;
 
@@ -699,15 +699,15 @@ void AddGBCheat::OnNumberType(UINT id)
   switch(id) {
   case IDC_SIGNED:
     numberType = 0;
-    regSetDwordValue("gbCheatsNumberType", 0);
+    regSetDwordValue(_T("gbCheatsNumberType"), 0);
     break;
   case IDC_UNSIGNED:
     numberType = 1;
-    regSetDwordValue("gbCheatsNumberType", 1);
+    regSetDwordValue(_T("gbCheatsNumberType"), 1);
     break;
   case IDC_HEXADECIMAL:
     numberType = 2;
-    regSetDwordValue("gbCheatsNumberType", 2);
+    regSetDwordValue(_T("gbCheatsNumberType"), 2);
     break;
   }
 }
@@ -717,15 +717,15 @@ void AddGBCheat::OnSizeType(UINT id)
   switch(id) {
   case IDC_SIZE_8:
     sizeType = BITS_8;
-    regSetDwordValue("gbCheatsSizeType", 0);
+    regSetDwordValue(_T("gbCheatsSizeType"), 0);
     break;
   case IDC_SIZE_16:
     sizeType = BITS_16;
-    regSetDwordValue("gbCheatsSizeType", 1);
+    regSetDwordValue(_T("gbCheatsSizeType"), 1);
     break;
   case IDC_SIZE_32:
     sizeType = BITS_32;
-    regSetDwordValue("gbCheatsSizeType", 2);
+    regSetDwordValue(_T("gbCheatsSizeType"), 2);
     break;
   }
 }
@@ -777,7 +777,7 @@ void GBCheatList::OnOk()
 void GBCheatList::OnAddGgCheat()
 {
   CString temp = winResLoadString(IDS_ADD_GG_CODE);
-  AddGBCode dlg(winGbCheatAddVerifyGg, 11, temp);
+  AddGBCode dlg(winGbCheatAddVerifyGg, 11, CStringA(temp));
   dlg.DoModal();
   refresh();
 }
@@ -786,7 +786,7 @@ void GBCheatList::OnAddGsCheat()
 {
   CString temp = winResLoadString(IDS_ADD_GS_CODE);
 
-  AddGBCode dlg(winGbCheatAddVerifyGs, 8, temp);
+  AddGBCode dlg(winGbCheatAddVerifyGs, 8, CStringA(temp));
   dlg.DoModal();
   refresh();
 }
@@ -889,10 +889,12 @@ void GBCheatList::refresh()
 
   m_list.DeleteAllItems();
 
-  char buffer[2];
+  TCHAR buffer[2];
 
   for(int i = 0; i < gbCheatNumber; i++) {
     LVITEM item;
+    CString text(gbCheatList[i].cheatCode);
+    CString desc(gbCheatList[i].cheatDesc);
 
     item.mask = LVIF_TEXT | LVIF_PARAM | LVIF_STATE;
     item.iItem = i;
@@ -900,12 +902,12 @@ void GBCheatList::refresh()
     item.lParam = i;
     item.state = 0;
     item.stateMask = 0;
-    item.pszText = gbCheatList[i].cheatCode;
+    item.pszText = text.GetBuffer();
     m_list.InsertItem(&item);
 
     m_list.SetCheck(i, (gbCheatList[i].enabled ? TRUE : FALSE));
 
-    m_list.SetItemText(i, 1, gbCheatList[i].cheatDesc);
+    m_list.SetItemText(i, 1, desc);
 
     buffer[0] = (gbCheatList[i].enabled) ? 'E' : 'D';
     buffer[1] = 0;
@@ -958,10 +960,10 @@ void AddGBCode::OnOk()
   m_code.GetWindowText(buffer);
   m_desc.GetWindowText(desc);
 
-  StringTokenizer st(buffer, " \t\n\r");
-  const char *t = st.next();
+  StringTokenizer st(buffer, _T(" \t\n\r"));
+  LPCTSTR t = st.next();
   while(t) {
-	  if( !addVerify(t, desc) ) {
+      if (!addVerify(CStringA(t), CStringA(desc))) {
 		  EndDialog( IDABORT );
 		  return;
 	  }
@@ -1005,14 +1007,14 @@ void GBCheatList::OnNMDblclkCheatList(NMHDR *pNMHDR, LRESULT *pResult)
 	INT_PTR res = IDABORT;
 	if( gbVerifyGsCode( gbCheatList[ item.lParam ].cheatCode ) ) {
 		CString temp = winResLoadString(IDS_ADD_GS_CODE);
-		AddGBCode dlg( winGbCheatAddVerifyGs, 8, temp );
+        AddGBCode dlg(winGbCheatAddVerifyGs, 8, CStringA(temp));
 		dlg.m_codeVal = gbCheatList[ item.lParam ].cheatCode;
 		dlg.m_descVal = gbCheatList[ item.lParam ].cheatDesc;
 		dlg.m_onlyOneLine = true;
 		res = dlg.DoModal();
 	} else if( gbVerifyGgCode( gbCheatList[ item.lParam ].cheatCode ) ) {
 		CString temp = winResLoadString(IDS_ADD_GG_CODE);
-		AddGBCode dlg( winGbCheatAddVerifyGg, 11, temp );
+        AddGBCode dlg(winGbCheatAddVerifyGg, 11, CStringA(temp));
 		dlg.m_codeVal = gbCheatList[ item.lParam ].cheatCode;
 		dlg.m_descVal = gbCheatList[ item.lParam ].cheatDesc;
 		dlg.m_onlyOneLine = true;

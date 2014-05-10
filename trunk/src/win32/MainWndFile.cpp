@@ -68,7 +68,7 @@ void MainWnd::OnFileReset()
 {
   if(emulating) {
     theApp.emulator.emuReset();
-    systemScreenMessage(winResLoadString(IDS_RESET));
+    systemScreenMessage(CStringA(winResLoadString(IDS_RESET)));
   }
 }
 
@@ -150,7 +150,7 @@ void MainWnd::OnFileClose()
   }
   emulating = 0;
   RedrawWindow(NULL,NULL,RDW_INVALIDATE|RDW_ERASE|RDW_ALLCHILDREN);
-  systemSetTitle(VBA_NAME_AND_SUBVERSION);
+  systemSetTitle(CStringA(VBA_NAME_AND_SUBVERSION));
 }
 
 void MainWnd::OnUpdateFileClose(CCmdUI* pCmdUI)
@@ -163,22 +163,22 @@ void MainWnd::OnFileLoad()
   CString buffer;
   CString filename;
 
-  int index = theApp.filename.ReverseFind('\\');
+  int index = theApp.filename.ReverseFind(_T('\\'));
 
   if(index != -1)
     buffer = theApp.filename.Right(theApp.filename.GetLength()-index-1);
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
-  if( saveDir[0] == '.' ) {
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
+  if( saveDir[0] == _T('.') ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
-	  baseDir[MAX_PATH] = '\0'; // for security reasons
+	  baseDir[MAX_PATH] = _T('\0'); // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -186,15 +186,15 @@ void MainWnd::OnFileLoad()
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.sgm", saveDir, buffer);
+    filename.Format(_T("%s%s.sgm"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.sgm", saveDir, buffer);
+    filename.Format(_T("%s\\%s.sgm"), saveDir, buffer);
 
-  LPCTSTR exts[] = { ".sgm" };
+  LPCTSTR exts[] = { _T(".sgm") };
   CString filter = winLoadFilter(IDS_FILTER_SGM);
   CString title = winResLoadString(IDS_SELECT_SAVE_GAME_NAME);
 
-  FileDlg dlg(this, filename, filter, 0, "", exts, saveDir, title, false);
+  FileDlg dlg(this, filename, filter, 0, _T(""), exts, saveDir, title, false);
 
   if(dlg.DoModal() == IDOK) {
     bool res = loadSaveGame(dlg.GetPathName());
@@ -204,7 +204,7 @@ void MainWnd::OnFileLoad()
     theApp.rewindSaveNeeded = false;
 
     if(res)
-      systemScreenMessage(winResLoadString(IDS_LOADED_STATE));
+      systemScreenMessage(CStringA(winResLoadString(IDS_LOADED_STATE)));
   }
 }
 
@@ -220,22 +220,22 @@ BOOL MainWnd::OnFileLoadSlot(UINT nID)
   CString buffer;
   CString filename;
 
-  int index = theApp.filename.ReverseFind('\\');
+  int index = theApp.filename.ReverseFind(_T('\\'));
 
   if(index != -1)
     buffer = theApp.filename.Right(theApp.filename.GetLength()-index-1);
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
-  if( saveDir[0] == '.' ) {
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
+  if( saveDir[0] == _T('.') ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
-	  baseDir[MAX_PATH] = '\0'; // for security reasons
+	  baseDir[MAX_PATH] = _T('\0'); // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -243,9 +243,9 @@ BOOL MainWnd::OnFileLoadSlot(UINT nID)
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s%d.sgm", saveDir, buffer, nID);
+    filename.Format(_T("%s%s%d.sgm"), saveDir, buffer, nID);
   else
-    filename.Format("%s\\%s%d.sgm", saveDir, buffer, nID);
+    filename.Format(_T("%s\\%s%d.sgm"), saveDir, buffer, nID);
 
   CString format = winResLoadString(IDS_LOADED_STATE_N);
   buffer.Format(format, nID);
@@ -255,7 +255,7 @@ BOOL MainWnd::OnFileLoadSlot(UINT nID)
   if (theApp.paused)
     InterframeCleanup();
 
-  systemScreenMessage(buffer);
+  systemScreenMessage(CStringA(buffer));
 
   systemDrawScreen();
 
@@ -271,22 +271,22 @@ void MainWnd::OnFileSave()
   CString buffer;
   CString filename;
 
-  int index = theApp.filename.ReverseFind('\\');
+  int index = theApp.filename.ReverseFind(_T('\\'));
 
   if(index != -1)
     buffer = theApp.filename.Right(theApp.filename.GetLength()-index-1);
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
-  if( saveDir[0] == '.' ) {
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
+  if( saveDir[0] == _T('.') ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
-	  baseDir[MAX_PATH] = '\0'; // for security reasons
+	  baseDir[MAX_PATH] = _T('\0'); // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -294,20 +294,20 @@ void MainWnd::OnFileSave()
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s.sgm", saveDir, buffer);
+    filename.Format(_T("%s%s.sgm"), saveDir, buffer);
   else
-    filename.Format("%s\\%s.sgm", saveDir, buffer);
+    filename.Format(_T("%s\\%s.sgm"), saveDir, buffer);
 
-  LPCTSTR exts[] = { ".sgm" };
+  LPCTSTR exts[] = { _T(".sgm") };
   CString filter = winLoadFilter(IDS_FILTER_SGM);
   CString title = winResLoadString(IDS_SELECT_SAVE_GAME_NAME);
 
-  FileDlg dlg(this, filename, filter, 0, "", exts, saveDir, title, true);
+  FileDlg dlg(this, filename, filter, 0, _T(""), exts, saveDir, title, true);
 
   if(dlg.DoModal() == IDOK) {
     bool res = writeSaveGame(dlg.GetPathName());
     if(res)
-      systemScreenMessage(winResLoadString(IDS_WROTE_STATE));
+      systemScreenMessage(CStringA(winResLoadString(IDS_WROTE_STATE)));
   }
 }
 
@@ -330,15 +330,15 @@ BOOL MainWnd::OnFileSaveSlot(UINT nID)
   else
     buffer = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -346,16 +346,16 @@ BOOL MainWnd::OnFileSaveSlot(UINT nID)
     saveDir = getDirFromFile(theApp.filename);
 
   if(isDriveRoot(saveDir))
-    filename.Format("%s%s%d.sgm", saveDir, buffer, nID);
+    filename.Format(_T("%s%s%d.sgm"), saveDir, buffer, nID);
   else
-    filename.Format("%s\\%s%d.sgm", saveDir, buffer, nID);
+    filename.Format(_T("%s\\%s%d.sgm"), saveDir, buffer, nID);
 
   bool res = writeSaveGame(filename);
 
   CString format = winResLoadString(IDS_WROTE_STATE_N);
   buffer.Format(format, nID);
 
-  systemScreenMessage(buffer);
+  systemScreenMessage(CStringA(buffer));
 
   systemDrawScreen();
 
@@ -364,26 +364,26 @@ BOOL MainWnd::OnFileSaveSlot(UINT nID)
 
 void MainWnd::OnFileImportBatteryfile()
 {
-  LPCTSTR exts[] = { ".sav", ".dat" };
+  LPCTSTR exts[] = { _T(".sav"), _T(".dat") };
   CString filter = winLoadFilter(IDS_FILTER_SAV);
   CString title = winResLoadString(IDS_SELECT_BATTERY_FILE);
 
-  CString saveDir = regQueryStringValue("batteryDir", NULL);
+  CString saveDir = regQueryStringValue(_T("batteryDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
   if(saveDir.IsEmpty())
     saveDir = getDirFromFile(theApp.filename);
 
-  FileDlg dlg(this, "", filter, 0, "", exts, saveDir, title, false);
+  FileDlg dlg(this, _T(""), filter, 0, _T(""), exts, saveDir, title, false);
 
   if(dlg.DoModal() == IDCANCEL)
     return;
@@ -398,7 +398,7 @@ void MainWnd::OnFileImportBatteryfile()
 
   bool res = false;
 
-  res = theApp.emulator.emuReadBattery(dlg.GetPathName());
+  res = theApp.emulator.emuReadBattery(CStringA(dlg.GetPathName()));
 
   if(!res)
     systemMessage(MSG_CANNOT_OPEN_FILE, "Cannot open file %s", dlg.GetPathName());
@@ -415,11 +415,11 @@ void MainWnd::OnUpdateFileImportBatteryfile(CCmdUI* pCmdUI)
 
 void MainWnd::OnFileImportGamesharkcodefile()
 {
-  LPCTSTR exts[] = { "" };
+  LPCTSTR exts[] = { _T("") };
   CString filter = theApp.cartridgeType == 0 ? winLoadFilter(IDS_FILTER_SPC) : winLoadFilter(IDS_FILTER_GCF);
   CString title = winResLoadString(IDS_SELECT_CODE_FILE);
 
-  FileDlg dlg(this, "", filter, 0, "", exts, "", title, false);
+  FileDlg dlg(this, _T(""), filter, 0, _T(""), exts, _T(""), title, false);
 
   if(dlg.DoModal() == IDCANCEL)
     return;
@@ -435,7 +435,7 @@ void MainWnd::OnFileImportGamesharkcodefile()
   bool res = false;
   CString file = dlg.GetPathName();
   if(theApp.cartridgeType == 1)
-    res = gbCheatReadGSCodeFile(file);
+      res = gbCheatReadGSCodeFile(CStringA(file));
   else {
     res = fileImportGSACodeFile(file);
   }
@@ -448,11 +448,11 @@ void MainWnd::OnUpdateFileImportGamesharkcodefile(CCmdUI* pCmdUI)
 
 void MainWnd::OnFileImportGamesharksnapshot()
 {
-  LPCTSTR exts[] = { ".?ps", ".gsv" };
+  LPCTSTR exts[] = { _T(".?ps"), _T(".gsv") };
   CString filter = theApp.cartridgeType == 1 ? winLoadFilter(IDS_FILTER_GBS) : winLoadFilter(IDS_FILTER_GSVSPS);
   CString title = winResLoadString(IDS_SELECT_SNAPSHOT_FILE);
 
-  FileDlg dlg(this, "", filter, 0, "", exts, "", title, false);
+  FileDlg dlg(this, _T(""), filter, 0, _T(""), exts, _T(""), title, false);
 
   if(dlg.DoModal() == IDCANCEL)
     return;
@@ -466,13 +466,13 @@ void MainWnd::OnFileImportGamesharksnapshot()
     return;
 
   if(theApp.cartridgeType == IMAGE_GB && dlg.getFilterIndex() == 1)
-    gbReadGSASnapshot(dlg.GetPathName());
+    gbReadGSASnapshot(CStringA(dlg.GetPathName()));
   else if(theApp.cartridgeType == IMAGE_GB && dlg.getFilterIndex() == 2) {
 	/* gameboy .gsv saves? */ }
   else if(theApp.cartridgeType == IMAGE_GBA && dlg.getFilterIndex() == 2)
-	CPUReadGSASPSnapshot(dlg.GetPathName());
+      CPUReadGSASPSnapshot(CStringA(dlg.GetPathName()));
   else
-    CPUReadGSASnapshot(dlg.GetPathName());
+      CPUReadGSASnapshot(CStringA(dlg.GetPathName()));
 }
 
 void MainWnd::OnUpdateFileImportGamesharksnapshot(CCmdUI* pCmdUI)
@@ -491,20 +491,20 @@ void MainWnd::OnFileExportBatteryfile()
   else
     name = theApp.filename;
 
-  LPCTSTR exts[] = {".sav", ".dat" };
+  LPCTSTR exts[] = {_T(".sav"), _T(".dat") };
 
   CString filter = winLoadFilter(IDS_FILTER_SAV);
   CString title = winResLoadString(IDS_SELECT_BATTERY_FILE);
 
-  CString saveDir = regQueryStringValue("batteryDir", NULL);
+  CString saveDir = regQueryStringValue(_T("batteryDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -515,7 +515,7 @@ void MainWnd::OnFileExportBatteryfile()
               name,
               filter,
               1,
-              "SAV",
+              _T("SAV"),
               exts,
               saveDir,
               title,
@@ -528,9 +528,9 @@ void MainWnd::OnFileExportBatteryfile()
   bool result = false;
 
   if(theApp.cartridgeType == 1) {
-    result = gbWriteBatteryFile(dlg.GetPathName(), false);
+      result = gbWriteBatteryFile(CStringA(dlg.GetPathName(), false));
   } else
-    result = theApp.emulator.emuWriteBattery(dlg.GetPathName());
+      result = theApp.emulator.emuWriteBattery(CStringA(dlg.GetPathName()));
 
   if(!result)
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s",
@@ -558,7 +558,7 @@ void MainWnd::OnFileExportGamesharksnapshot()
   else
     name = theApp.filename;
 
-  LPCTSTR exts[] = {".sps" };
+  LPCTSTR exts[] = {_T(".sps") };
 
   CString filter = winLoadFilter(IDS_FILTER_SPS);
   CString title = winResLoadString(IDS_SELECT_SNAPSHOT_FILE);
@@ -567,20 +567,18 @@ void MainWnd::OnFileExportGamesharksnapshot()
               name,
               filter,
               1,
-              "SPS",
+              _T("SPS"),
               exts,
-              "",
+              _T(""),
               title,
               true);
 
   if(dlg.DoModal() == IDCANCEL)
     return;
 
-  char buffer[16];
-  strncpy(buffer, (const char *)&rom[0xa0], 12);
-  buffer[12] = 0;
+  CStringA bufferA((const char *)&rom[0xa0], 12);
 
-  ExportGSASnapshot dlg2(dlg.GetPathName(), buffer, this);
+  ExportGSASnapshot dlg2(dlg.GetPathName(), CString(bufferA), this);
   dlg2.DoModal();
 }
 
@@ -601,32 +599,32 @@ void MainWnd::OnFileScreencapture()
   else
     name = theApp.filename;
 
-  CString capdir = regQueryStringValue("captureDir", "");
+  CString capdir = regQueryStringValue(_T("captureDir"), _T(""));
   if( capdir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, capdir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, capdir );
 	  capdir = baseDir;
 	}
 
   if(capdir.IsEmpty())
     capdir = getDirFromFile(theApp.filename);
 
-  CString ext = "png";
+  CString ext = _T("png");
 
   if(theApp.captureFormat != 0)
-    ext = "bmp";
+    ext = _T("bmp");
 
   if(isDriveRoot(capdir))
-    filename.Format("%s%s.%s", capdir, name, ext);
+    filename.Format(_T("%s%s.%s"), capdir, name, ext);
   else
-    filename.Format("%s\\%s.%s", capdir, name, ext);
+    filename.Format(_T("%s\\%s.%s"), capdir, name, ext);
 
-  LPCTSTR exts[] = {".png", ".bmp" };
+  LPCTSTR exts[] = {_T(".png"), _T(".bmp") };
 
   CString filter = winLoadFilter(IDS_FILTER_PNG);
   CString title = winResLoadString(IDS_SELECT_CAPTURE_NAME);
@@ -635,7 +633,7 @@ void MainWnd::OnFileScreencapture()
               filename,
               filter,
               theApp.captureFormat ? 2 : 1,
-              theApp.captureFormat ? "BMP" : "PNG",
+              theApp.captureFormat ? _T("BMP") : _T("PNG"),
               exts,
               capdir,
               title,
@@ -645,11 +643,11 @@ void MainWnd::OnFileScreencapture()
     return;
 
   if(dlg.getFilterIndex() == 2)
-    theApp.emulator.emuWriteBMP(dlg.GetPathName());
+      theApp.emulator.emuWriteBMP(CStringA(dlg.GetPathName()));
   else
-    theApp.emulator.emuWritePNG(dlg.GetPathName());
+      theApp.emulator.emuWritePNG(CStringA(dlg.GetPathName()));
 
-  systemScreenMessage(winResLoadString(IDS_SCREEN_CAPTURE));
+  systemScreenMessage(CStringA(winResLoadString(IDS_SCREEN_CAPTURE)));
 }
 
 void MainWnd::OnUpdateFileScreencapture(CCmdUI* pCmdUI)
@@ -694,7 +692,7 @@ void MainWnd::OnUpdateFileTogglemenu(CCmdUI* pCmdUI)
 
 bool MainWnd::fileImportGSACodeFile(CString& fileName)
 {
-  FILE *f = fopen(fileName, "rb");
+  FILE *f = _tfopen(fileName, _T("rb"));
 
   if(f == NULL) {
     systemMessage(MSG_CANNOT_OPEN_FILE, "Cannot open file %s", fileName);
@@ -709,7 +707,7 @@ bool MainWnd::fileImportGSACodeFile(CString& fileName)
                   fileName);
     return false;
   }
-  char buffer[16];
+  TCHAR buffer[16];
   fread(buffer, 1, 14, f);
   buffer[14] = 0;
   if(memcmp(buffer, "SharkPortCODES", 14)) {
@@ -732,12 +730,12 @@ bool MainWnd::fileImportGSACodeFile(CString& fileName)
   int index = fileName.ReverseFind('.');
 
   if(index != -1) {
-    if(fileName.Right(3).CompareNoCase("XPC") == 0)
+    if(fileName.Right(3).CompareNoCase(_T("XPC")) == 0)
       v3 = true;
   }
 
   if(game != -1) {
-    return cheatsImportGSACodeFile(fileName, (int)game, v3);
+      return cheatsImportGSACodeFile(CStringA(fileName), (int)game, v3);
   }
 
   return true;
@@ -757,15 +755,15 @@ void MainWnd::OnFileSavegameOldestslot()
   else
     filename = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -782,7 +780,7 @@ void MainWnd::OnFileSavegameOldestslot()
   int found = 0;
 
   for(int i = 0; i < 10; i++) {
-    name.Format("%s%s%d.sgm", saveDir, filename, i+1);
+    name.Format(_T("%s%s%d.sgm"), saveDir, filename, i+1);
 
     if(emulating && CFile::GetStatus(name, status)) {
       if( (status.m_mtime.GetTime() < time) || !time ) {
@@ -811,15 +809,15 @@ void MainWnd::OnUpdateFileSavegameOldestslot(CCmdUI* pCmdUI)
     else
       filename = theApp.filename;
 
-    CString saveDir = regQueryStringValue("saveDir", NULL);
+    CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
 	if( saveDir[0] == '.' ) {
 		// handle as relative path
-		char baseDir[MAX_PATH+1];
+		TCHAR baseDir[MAX_PATH+1];
 		GetModuleFileName( NULL, baseDir, MAX_PATH );
 		baseDir[MAX_PATH] = '\0'; // for security reasons
 		PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-		strcat( baseDir, "\\" );
-		strcat( baseDir, saveDir );
+		_tcscat( baseDir, _T("\\") );
+		_tcscat( baseDir, saveDir );
 		saveDir = baseDir;
 	}
 
@@ -827,20 +825,20 @@ void MainWnd::OnUpdateFileSavegameOldestslot(CCmdUI* pCmdUI)
       saveDir = getDirFromFile(theApp.filename);
 
     if(!isDriveRoot(saveDir))
-      saveDir += "\\";
+      saveDir += _T("\\");
 
     CString name;
     CFileStatus status;
     CString str;
 
     for(int i = 0; i < 10; i++) {
-      name.Format("%s%s%d.sgm", saveDir, filename, i+1);
+      name.Format(_T("%s%s%d.sgm"), saveDir, filename, i+1);
 
       if(emulating && CFile::GetStatus(name, status)) {
-        CString timestamp = status.m_mtime.Format("%Y/%m/%d %H:%M:%S");
-        str.Format("%d %s", i+1, timestamp);
+        CString timestamp = status.m_mtime.Format(_T("%Y/%m/%d %H:%M:%S"));
+        str.Format(_T("%d %s"), i+1, timestamp);
       } else {
-        str.Format("%d ----/--/-- --:--:--", i+1);
+        str.Format(_T("%d ----/--/-- --:--:--"), i+1);
       }
       pMenu->ModifyMenu(ID_FILE_SAVEGAME_SLOT1+i, MF_STRING|MF_BYCOMMAND, ID_FILE_SAVEGAME_SLOT1+i, str);
     }
@@ -863,15 +861,15 @@ void MainWnd::OnFileLoadgameMostrecent()
   else
     filename = theApp.filename;
 
-  CString saveDir = regQueryStringValue("saveDir", NULL);
+  CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
   if( saveDir[0] == '.' ) {
 	  // handle as relative path
-	  char baseDir[MAX_PATH+1];
+	  TCHAR baseDir[MAX_PATH+1];
 	  GetModuleFileName( NULL, baseDir, MAX_PATH );
 	  baseDir[MAX_PATH] = '\0'; // for security reasons
 	  PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-	  strcat( baseDir, "\\" );
-	  strcat( baseDir, saveDir );
+	  _tcscat( baseDir, _T("\\") );
+	  _tcscat( baseDir, saveDir );
 	  saveDir = baseDir;
 	}
 
@@ -879,7 +877,7 @@ void MainWnd::OnFileLoadgameMostrecent()
     saveDir = getDirFromFile(theApp.filename);
 
   if(!isDriveRoot(saveDir))
-    saveDir += "\\";
+    saveDir += _T("\\");
 
   CString name;
   CFileStatus status;
@@ -888,7 +886,7 @@ void MainWnd::OnFileLoadgameMostrecent()
   int found = -1;
 
   for(int i = 0; i < 10; i++) {
-    name.Format("%s%s%d.sgm", saveDir, filename, i+1);
+    name.Format(_T("%s%s%d.sgm"), saveDir, filename, i+1);
 
     if(emulating && CFile::GetStatus(name, status)) {
 if(status.m_mtime.GetTime() > time) {
@@ -917,15 +915,15 @@ void MainWnd::OnUpdateFileLoadgameMostrecent(CCmdUI* pCmdUI)
     else
       filename = theApp.filename;
 
-    CString saveDir = regQueryStringValue("saveDir", NULL);
+    CString saveDir = regQueryStringValue(_T("saveDir"), NULL);
 	if( saveDir[0] == '.' ) {
 		// handle as relative path
-		char baseDir[MAX_PATH+1];
+		TCHAR baseDir[MAX_PATH+1];
 		GetModuleFileName( NULL, baseDir, MAX_PATH );
 		baseDir[MAX_PATH] = '\0'; // for security reasons
 		PathRemoveFileSpec( baseDir ); // removes the trailing file name and backslash
-		strcat( baseDir, "\\" );
-		strcat( baseDir, saveDir );
+		_tcscat( baseDir, _T("\\") );
+		_tcscat( baseDir, saveDir );
 		saveDir = baseDir;
 	}
 
@@ -933,20 +931,20 @@ void MainWnd::OnUpdateFileLoadgameMostrecent(CCmdUI* pCmdUI)
       saveDir = getDirFromFile(theApp.filename);
 
     if(!isDriveRoot(saveDir))
-      saveDir += "\\";
+      saveDir += _T("\\");
 
     CString name;
     CFileStatus status;
     CString str;
 
     for(int i = 0; i < 10; i++) {
-      name.Format("%s%s%d.sgm", saveDir, filename, i+1);
+      name.Format(_T("%s%s%d.sgm"), saveDir, filename, i+1);
 
       if(emulating && CFile::GetStatus(name, status)) {
-        CString timestamp = status.m_mtime.Format("%Y/%m/%d %H:%M:%S");
-        str.Format("%d %s", i+1, timestamp);
+        CString timestamp = status.m_mtime.Format(_T("%Y/%m/%d %H:%M:%S"));
+        str.Format(_T("%d %s"), i+1, timestamp);
       } else {
-        str.Format("%d ----/--/-- --:--:--", i+1);
+        str.Format(_T("%d ----/--/-- --:--:--"), i+1);
       }
       pMenu->ModifyMenu(ID_FILE_LOADGAME_SLOT1+i, MF_STRING|MF_BYCOMMAND, ID_FILE_LOADGAME_SLOT1+i, str);
     }

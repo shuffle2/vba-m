@@ -137,16 +137,16 @@ BOOL GBColorDlg::OnInitDialog()
     colors[i] = systemGbPalette[i];
   }
 
-  const char *names[] = {
-    "Standard",
-    "Blue Sea",
-    "Dark Night",
-    "Green Forest",
-    "Hot Desert",
-    "Pink Dreams",
-    "Weird Colors",
-	"Real GB Colors",
-    "Real 'GB on GBASP' Colors"
+  LPCTSTR names[] = {
+    _T("Standard"),
+    _T("Blue Sea"),
+    _T("Dark Night"),
+    _T("Green Forest"),
+    _T("Hot Desert"),
+    _T("Pink Dreams"),
+    _T("Weird Colors"),
+	_T("Real GB Colors"),
+    _T("Real 'GB on GBASP' Colors")
   };
 
   for(int j = 0; j < 9; j++) {

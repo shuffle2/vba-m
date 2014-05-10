@@ -24,7 +24,7 @@ StringTokenizer::~StringTokenizer()
 }
 
 
-const char *StringTokenizer::next()
+LPCTSTR StringTokenizer::next()
 {
   int index = m_right.FindOneOf(m_delim);
 

@@ -97,11 +97,11 @@ BEGIN_MESSAGE_MAP(TileView, CDialog)
   /////////////////////////////////////////////////////////////////////////////
 // TileView message handlers
 
-void TileView::saveBMP(const char *name)
+void TileView::saveBMP(LPCTSTR name)
 {
   u8 writeBuffer[1024 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s", name);
@@ -165,11 +165,11 @@ void TileView::saveBMP(const char *name)
 }
 
 
-void TileView::savePNG(const char *name)
+void TileView::savePNG(LPCTSTR name)
 {
   u8 writeBuffer[1024 * 3];
 
-  FILE *fp = fopen(name,"wb");
+  FILE *fp = _tfopen(name,_T("wb"));
 
   if(!fp) {
     systemMessage(MSG_ERROR_CREATING_FILE, "Error creating file %s", name);
@@ -249,11 +249,11 @@ void TileView::OnSave()
     CString captureBuffer;
 
     if(theApp.captureFormat == 0)
-      captureBuffer = "tiles.png";
+      captureBuffer = _T("tiles.png");
     else
-      captureBuffer = "tiles.bmp";
+      captureBuffer = _T("tiles.bmp");
 
-    LPCTSTR exts[] = {".png", ".bmp" };
+    LPCTSTR exts[] = {_T(".png"), _T(".bmp") };
 
     CString filter = theApp.winLoadFilter(IDS_FILTER_PNG);
     CString title = winResLoadString(IDS_SELECT_CAPTURE_NAME);
@@ -262,9 +262,9 @@ void TileView::OnSave()
                 captureBuffer,
                 filter,
                 theApp.captureFormat ? 2 : 1,
-                theApp.captureFormat ? "BMP" : "PNG",
+                theApp.captureFormat ? _T("BMP") : _T("PNG"),
                 exts,
-                "",
+                _T(""),
                 title,
                 true);
 
@@ -405,7 +405,7 @@ BOOL TileView::OnInitDialog()
     SetData(sz,
             TRUE,
             HKEY_CURRENT_USER,
-            "Software\\Emulators\\VisualBoyAdvance\\Viewer\\TileView",
+            _T("Software\\Emulators\\VisualBoyAdvance\\Viewer\\TileView"),
             NULL);
 
   m_colors = is256Colors;
@@ -417,7 +417,7 @@ BOOL TileView::OnInitDialog()
 
   paint();
 
-  m_stretch = regQueryDwordValue("tileViewStretch", 0);
+  m_stretch = regQueryDwordValue(_T("tileViewStretch"), 0);
   if(m_stretch)
     tileView.setStretch(true);
   UpdateData(FALSE);
@@ -500,7 +500,7 @@ void TileView::OnStretch()
 {
   tileView.setStretch(!tileView.getStretch());
   paint();
-  regSetDwordValue("tileViewStretch", tileView.getStretch());
+  regSetDwordValue(_T("tileViewStretch"), tileView.getStretch());
 }
 
 LRESULT TileView::OnMapInfo(WPARAM wParam, LPARAM lParam)
@@ -518,10 +518,10 @@ LRESULT TileView::OnMapInfo(WPARAM wParam, LPARAM lParam)
   address += 32 * tile;
 
   CString buffer;
-  buffer.Format("%d", tile);
+  buffer.Format(_T("%d"), tile);
   GetDlgItem(IDC_TILE_NUMBER)->SetWindowText(buffer);
 
-  buffer.Format("%08x", address);
+  buffer.Format(_T("%08x"), address);
   GetDlgItem(IDC_ADDRESS)->SetWindowText(buffer);
 
   return TRUE;
@@ -538,13 +538,13 @@ LRESULT TileView::OnColInfo(WPARAM wParam, LPARAM)
   int b = (c & 0x7c00) >> 10;
 
   CString buffer;
-  buffer.Format("R: %d", r);
+  buffer.Format(_T("R: %d"), r);
   GetDlgItem(IDC_R)->SetWindowText(buffer);
 
-  buffer.Format("G: %d", g);
+  buffer.Format(_T("G: %d"), g);
   GetDlgItem(IDC_G)->SetWindowText(buffer);
 
-  buffer.Format("B: %d", b);
+  buffer.Format(_T("B: %d"), b);
   GetDlgItem(IDC_B)->SetWindowText(buffer);
 
   return TRUE;

@@ -397,6 +397,7 @@
     <ClInclude Include="..\..\src\win32\GBTileView.h">
       <Filter>MFC\GB</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\svnrev.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\win32\res\VBA.ico">

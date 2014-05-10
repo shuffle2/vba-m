@@ -64,7 +64,7 @@ BOOL GSACodeSelect::OnInitDialog()
 {
   CDialog::OnInitDialog();
 
-  char buffer[1024];
+  TCHAR buffer[1024];
 
   FILE *f = m_file;
   int games = 0;

@@ -17,7 +17,13 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-#define VBA_NAME "VisualBoyAdvance-M"
+#define VBA_NAME_W L"VisualBoyAdvance-M"
+#define VBA_NAME_A "VisualBoyAdvance-M"
+#ifdef UNICODE
+#define VBA_NAME VBA_NAME_W
+#else
+#define VBA_NAME VBA_NAME_A
+#endif
 
 #ifdef WIN32
 #include "svnrev.h"
@@ -29,18 +35,23 @@
 #endif
 #endif
 
-#define VBA_FEATURE_STRING ""
-
 #ifdef DEBUG
-#define VBA_SUBVERSION_STRING " debug"
+#define VBA_SUBVERSION_STRING_W L" debug"
+#define VBA_SUBVERSION_STRING_A " debug"
 #elif defined(PUBLIC_RELEASE)
-#define VBA_SUBVERSION_STRING ""
+#define VBA_SUBVERSION_STRING_W L""
+#define VBA_SUBVERSION_STRING_A ""
 #else
-#define VBA_SUBVERSION_STRING " (SVN" SVN_REV_STR ")"
+#define VBA_SUBVERSION_STRING_W L" (SVN" _T(SVN_REV_STR) L")"
+#define VBA_SUBVERSION_STRING_A " (SVN" SVN_REV_STR ")"
+#endif
+#ifdef UNICODE
+#define VBA_SUBVERSION_STRING VBA_SUBVERSION_STRING_W
+#else
+#define VBA_SUBVERSION_STRING VBA_SUBVERSION_STRING_A
 #endif
 
 #if defined(_MSC_VER)
-#define VBA_COMPILER ""
 #define VBA_COMPILER_DETAIL " msvc " _Py_STRINGIZE(_MSC_VER)
 #define _Py_STRINGIZE(X) _Py_STRINGIZE1((X))
 #define _Py_STRINGIZE1(X) _Py_STRINGIZE2 ## X
@@ -52,6 +63,19 @@
 #define VBA_COMPILER_DETAIL ""
 #endif
 
-#define VBA_VERSION_STRING " " "1.8.0" VBA_SUBVERSION_STRING VBA_FEATURE_STRING VBA_COMPILER
+#define VBA_VERSION_STRING_A " " "1.8.0" VBA_SUBVERSION_STRING
+#define VBA_VERSION_STRING_W L" " L"1.8.0" VBA_SUBVERSION_STRING
+#ifdef UNICODE
+#define VBA_VERSION_STRING VBA_VERSION_STRING_W
+#else
+#define VBA_VERSION_STRING VBA_VERSION_STRING_A
+#endif
+
 #define VBA_NAME_AND_VERSION " " VBA_NAME VBA_VERSION_STRING
-#define VBA_NAME_AND_SUBVERSION " " VBA_NAME VBA_SUBVERSION_STRING
+#define VBA_NAME_AND_SUBVERSION_W L" " VBA_NAME VBA_SUBVERSION_STRING
+#define VBA_NAME_AND_SUBVERSION_A " " VBA_NAME VBA_SUBVERSION_STRING
+#ifdef UNICODE
+#define VBA_NAME_AND_SUBVERSION VBA_NAME_AND_SUBVERSION_W
+#else
+#define VBA_NAME_AND_SUBVERSION VBA_NAME_AND_SUBVERSION_A
+#endif

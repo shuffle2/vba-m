@@ -57,7 +57,7 @@ void glFontBegin (GLFONT *Font);
 void glFontEnd (void);
 
 //Draws text with a glFont
-void glFontTextOut (char *String, float x, float y,
+void glFontTextOut (LPCTSTR String, float x, float y,
 	float z);
 //*********************************************************
 #ifdef	__cplusplus

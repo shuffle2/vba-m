@@ -51,7 +51,7 @@ void LinkOptions::DoDataExchange(CDataExchange* pDX)
 
 BOOL LinkOptions::OnInitDialog(){
 	TCITEM tabitem;
-	char tabtext[3][8] = {"General", "Server", "Client"};
+	TCHAR tabtext[3][8] = {_T("General"), _T("Server"), _T("Client")};
 	int i;
 
 	CDialog::OnInitDialog();
@@ -249,11 +249,11 @@ void CMyTabCtrl::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	int iItem = ds.itemID;
 
 	// Get tab item info
-	char text[128];
+	TCHAR textT[128];
 	TCITEM tci;
 	tci.mask = TCIF_TEXT;
-	tci.pszText = text;
-	tci.cchTextMax = sizeof(text);
+	tci.pszText = textT;
+	tci.cchTextMax = ARRAYSIZE(textT);
 	GetItem(iItem, &tci);
 
 	// use draw item DC
@@ -265,7 +265,7 @@ void CMyTabCtrl::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	rc += CPoint(1,4);						 // ?? by trial and error
 
 	// draw the text
-	OnDrawText(dc, rc, text, !IsTabEnabled(iItem));
+	OnDrawText(dc, rc, CString(textT), !IsTabEnabled(iItem));
 
 	dc.Detach();
 }
@@ -277,13 +277,13 @@ void CMyTabCtrl::OnDrawText(CDC& dc, CRect rc,
 	CString sText, BOOL bDisabled)
 {
 	dc.SetTextColor(GetSysColor(bDisabled ? COLOR_3DHILIGHT : COLOR_BTNTEXT));
-	dc.DrawText(sText, &rc, DT_CENTER|DT_VCENTER);
+	dc.DrawText(CString(sText), &rc, DT_CENTER|DT_VCENTER);
 
 	if (bDisabled) {
 		// disabled: draw again shifted northwest for shadow effect
 		rc += CPoint(-1,-1);
 		dc.SetTextColor(GetSysColor(COLOR_GRAYTEXT));
-		dc.DrawText(sText, &rc, DT_CENTER|DT_VCENTER);
+        dc.DrawText(CString(sText), &rc, DT_CENTER | DT_VCENTER);
 	}
 }
 
@@ -470,13 +470,13 @@ void LinkGeneral::OnRadio2()
 
 BOOL LinkGeneral::OnInitDialog(){
 
-	char timeout[6];
+	TCHAR timeout[6];
 
 	CDialog::OnInitDialog();
 
 	m_timeout.LimitText(5);
-	sprintf(timeout, "%d", linktimeout);
-	m_timeout.SetWindowText(timeout);
+	_stprintf(timeout, _T("%d"), linktimeout);
+	m_timeout.SetWindowText(CString(timeout));
 
 	m_type = lanlink.active;
 
@@ -505,7 +505,7 @@ public:
 		if (dlg)
 		{
 			// not connected
-			MessageBox(NULL, "Failed to connect.", "Link", MB_OK);
+			MessageBox(NULL, _T("Failed to connect."), _T("Link"), MB_OK);
 			dlg->SendMessage(WM_CLOSE, 0, 0);
 		}
 
@@ -515,12 +515,12 @@ public:
 
     void ShowServerIP(const sf::IPAddress& addr)
 	{
-		dlg->m_serveraddress.Format("Server IP address is: %s", addr.ToString());
+		dlg->m_serveraddress.Format(_T("Server IP address is: %s"), CString(addr.ToString().c_str()));
 	}
 
 	void ShowConnect(const int player)
 	{
-		dlg->m_plconn[0].Format("Player %d connected", player);
+		dlg->m_plconn[0].Format(_T("Player %d connected"), player);
 		dlg->UpdateData(false);
 	}
 
@@ -531,7 +531,7 @@ public:
 
 	void Connected()
 	{
-		MessageBox(NULL, "All players connected", "Link", MB_OK);
+		MessageBox(NULL, _T("All players connected"), _T("Link"), MB_OK);
 		dlg->SendMessage(WM_CLOSE, 0, 0);
 		delete dlg;
 		dlg = NULL;
@@ -561,7 +561,7 @@ void LinkServer::OnServerStart()
 	{
 		// Thread didn't get created
 		delete dlginfo;
-		MessageBox("Error occurred.\nPlease try again.", "Error", MB_OK);
+		MessageBox(_T("Error occurred.\nPlease try again."), _T("Error"), MB_OK);
 	}
 
 	return;
@@ -592,7 +592,7 @@ public:
 		if (dlg)
 		{
 			// not connected
-			MessageBox(NULL, "Failed to connect.", "Link", MB_OK);
+			MessageBox(NULL, _T("Failed to connect."), _T("Link"), MB_OK);
 			dlg->SendMessage(WM_CLOSE, 0, 0);
 		}
 
@@ -602,16 +602,16 @@ public:
 
     void ConnectStart(const sf::IPAddress& addr)
 	{
-	    dlg->SetWindowText("Connecting...");
+	    dlg->SetWindowText(_T("Connecting..."));
     }
 
     void ShowConnect(const int player, const int togo)
 	{
-	    dlg->m_serveraddress.Format("Connected as #%d", player);
+	    dlg->m_serveraddress.Format(_T("Connected as #%d"), player);
 	    if (togo)
-			dlg->m_plconn[0].Format("Waiting for %d players to join", togo);
+            dlg->m_plconn[0].Format(_T("Waiting for %d players to join"), togo);
 	    else
-			dlg->m_plconn[0].Format("All players joined.");
+            dlg->m_plconn[0].Format(_T("All players joined."));
     }
 
     void Ping()
@@ -621,7 +621,7 @@ public:
 
     void Connected()
 	{
-		MessageBox(NULL, "Connected.", "Link", MB_OK);
+		MessageBox(NULL, _T("Connected."), _T("Link"), MB_OK);
 		dlg->SendMessage(WM_CLOSE, 0, 0);
 		delete dlg;
 		dlg = NULL;
@@ -633,7 +633,7 @@ private:
 
 void LinkClient::OnLinkConnect()
 {
-	char ipaddress[31];
+	wchar_t ipaddressW[31];
 
 	UpdateData(TRUE);
 
@@ -641,7 +641,8 @@ void LinkClient::OnLinkConnect()
 	lanlink.server = false;
 	lanlink.speed = m_hacks==1 ? true : false;
 
-	m_serverip.GetWindowText(ipaddress, 30);
+	m_serverip.GetWindowText(ipaddressW, 30);
+    CStringA ipaddress(ipaddressW);
 
 	// These must be created on the heap - referenced from the connection thread
 	ServerWait *dlg = new ServerWait;
@@ -653,7 +654,7 @@ void LinkClient::OnLinkConnect()
 	{
 		// Thread didn't get created
 		delete dlginfo;
-		MessageBox("Error occurred.\nPlease try again.", "Error", MB_OK);
+		MessageBox(_T("Error occurred.\nPlease try again."), _T("Error"), MB_OK);
 	}
 	else
 	{
@@ -665,12 +666,12 @@ void LinkClient::OnLinkConnect()
 
 void LinkOptions::GetAllData(LinkGeneral *src)
 {
-	char timeout[6];
+	TCHAR timeout[6];
 
 	src->UpdateData(true);
 
-	src->m_timeout.GetWindowText(timeout, 5);
-	sscanf(timeout, "%d", &linktimeout);
+    src->m_timeout.GetWindowText(timeout, 5);
+	_tscanf(timeout, _T("%d"), &linktimeout);
 
 	if(src->m_type==0){
 		lanlink.speed = 0;

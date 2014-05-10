@@ -71,6 +71,6 @@ typedef	RENDER_PLUGIN_INFO	*(*RENDPLUG_GetInfo)(void);
 //---------------------------------------------------------------------------------------------------------------------------
 
 int rpiScaleFactor();
-bool rpiInit(const char *sPluginName);
+bool rpiInit(LPCTSTR sPluginName);
 void rpiFilter(u8 *srcPtr, u32 srcPitch, u8 *deltaPtr, u8 *dstPtr, u32 dstPitch, int width, int height);
 void rpiCleanup();

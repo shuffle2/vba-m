@@ -52,7 +52,7 @@ void RewindInterval::OnOk()
 
   m_interval.GetWindowText(buffer);
 
-  int v = atoi(buffer);
+  int v = _ttoi(buffer);
 
   if(v >= 0 && v <= 600) {
     EndDialog(v);
@@ -69,7 +69,7 @@ BOOL RewindInterval::OnInitDialog()
   m_interval.LimitText(3);
 
   CString buffer;
-  buffer.Format("%d", interval);
+  buffer.Format(_T("%d"), interval);
   m_interval.SetWindowText(buffer);
 
   CenterWindow();

@@ -17,19 +17,19 @@ extern int realsystemColorDepth;
 u8 *pBuffer16 = NULL;
 u32 Buffer16Size = 0;
 
-bool rpiInit(const char *sPluginName)
+bool rpiInit(LPCTSTR sPluginName)
 {
 	rpiCleanup();
 
-	char sBuffer[256];
-	char *ptr;
+    TCHAR sBuffer[256];
+	TCHAR *ptr;
 
 	GetModuleFileName(NULL, sBuffer, sizeof(sBuffer));
-	ptr = strrchr(sBuffer, '\\');
+	ptr = _tcschr(sBuffer, _T('\\'));
 	if (ptr)
-		*ptr = '\0';
-	strcat(sBuffer, "\\plugins\\");
-	strcat(sBuffer, sPluginName);
+		*ptr = _T('\0');
+	_tcscat(sBuffer, _T("\\plugins\\"));
+    _tcscat(sBuffer, sPluginName);
 
   	rpiDLL = LoadLibrary(sBuffer);
   	if (!rpiDLL)

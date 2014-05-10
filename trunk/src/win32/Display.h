@@ -27,7 +27,7 @@ class IDisplay {
   virtual void clear() = 0;
   virtual bool changeRenderSize(int w, int h) { return true; };
   virtual void resize(int w, int h) {};
-  virtual void setOption(const char *option, int value) {};
+  virtual void setOption(LPCTSTR option, int value) {};
   virtual DISPLAY_TYPE getType() = 0;
   virtual bool selectFullScreenMode( VIDEO_MODE &mode ) = 0;
 };
