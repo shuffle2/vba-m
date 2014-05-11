@@ -25,7 +25,7 @@ bool rpiInit(LPCTSTR sPluginName)
 	TCHAR *ptr;
 
 	GetModuleFileName(NULL, sBuffer, sizeof(sBuffer));
-	ptr = _tcschr(sBuffer, _T('\\'));
+	ptr = _tcsrchr(sBuffer, _T('\\'));
 	if (ptr)
 		*ptr = _T('\0');
 	_tcscat(sBuffer, _T("\\plugins\\"));

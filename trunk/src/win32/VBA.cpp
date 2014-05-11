@@ -344,7 +344,7 @@ VBA::~VBA()
   TCHAR winBuffer[2048];
 
   GetModuleFileName(NULL, winBuffer, 2048);
-  TCHAR *p = _tcschr(winBuffer, _T('\\'));
+  TCHAR *p = _tcsrchr(winBuffer, _T('\\'));
   if(p)
     *p = 0;
 
@@ -441,7 +441,7 @@ BOOL VBA::InitInstance()
   TCHAR winBuffer[2048];
 
   GetModuleFileName(NULL, winBuffer, 2048);
-  TCHAR *p = _tcschr(winBuffer, _T('\\'));
+  TCHAR *p = _tcsrchr(winBuffer, _T('\\'));
   if(p)
     *p = 0;
 

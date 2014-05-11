@@ -543,27 +543,27 @@ bool MainWnd::FileRun()
     UINT i = GetPrivateProfileInt(buffer,
 					                _T("rtcEnabled"),
                                   -1,
-                                  tempName);
+                                  tempBuffer);
     if(i != (UINT)-1)
       rtcEnable(i == 0 ? false : true);
 
     i = GetPrivateProfileInt(buffer,
                              _T("flashSize"),
                              -1,
-                             tempName);
+                             tempBuffer);
     if(i != (UINT)-1 && (i == 0x10000 || i == 0x20000))
       flashSetSize((int)i);
 
     i = GetPrivateProfileInt(buffer,
                              _T("saveType"),
                              -1,
-                             tempName);
+                             tempBuffer);
     if(i != (UINT)-1 && (i <= 5))
       cpuSaveType = (int)i;
     i = GetPrivateProfileInt(buffer,
                              _T("mirroringEnabled"),
                              -1,
-                             tempName);
+                             tempBuffer);
     if(i != (UINT)-1)
       doMirroring (i == 0 ? false : true);
 
